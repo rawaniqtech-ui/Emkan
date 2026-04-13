@@ -189,12 +189,12 @@ export default function HeroCanvas() {
             firstFrameLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
           }`}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-purple/10 backdrop-blur-md border border-brand-purple/20">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.06] md:bg-brand-purple/10 backdrop-blur-md border border-white/10 md:border-brand-purple/20">
             <span className="relative flex h-1.5 w-1.5">
               <span className="absolute inline-flex h-full w-full rounded-full bg-brand-teal opacity-60 animate-ping" />
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-teal" />
             </span>
-            <span className="text-[11px] md:text-xs font-medium text-brand-purple tracking-normal md:tracking-[0.25em] uppercase">
+            <span className="text-[11px] md:text-xs font-medium text-white md:text-brand-purple tracking-normal md:tracking-[0.25em] uppercase">
               رحلة إمكان
             </span>
           </div>
@@ -243,11 +243,11 @@ export default function HeroCanvas() {
                 <span className="block w-6 h-[1px] bg-brand-teal/60" />
               </div>
 
-              <h2 className="font-display font-bold text-2xl sm:text-3xl md:text-5xl text-brand-purple mb-2 md:mb-3 leading-tight">
+              <h2 className="font-display font-bold text-2xl sm:text-3xl md:text-5xl text-white md:text-brand-purple mb-2 md:mb-3 leading-tight">
                 {current.title}
               </h2>
 
-              <p className="text-[13px] sm:text-sm md:text-base text-brand-purple/75 leading-relaxed max-w-md mx-auto">
+              <p className="text-[13px] sm:text-sm md:text-base text-white/70 md:text-brand-purple/75 leading-relaxed max-w-md mx-auto">
                 {current.subtitle}
               </p>
             </div>
