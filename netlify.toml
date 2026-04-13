@@ -2,8 +2,11 @@
   command = "npm run build"
   publish = ".next"
 
-# Netlify auto-installs @netlify/plugin-nextjs when it detects a Next.js
-# project, so no explicit plugins block is needed.
+# Explicit Next.js runtime — without this Netlify serves .next as a plain
+# static folder and every route 404s. The plugin transforms .next into
+# Netlify Functions + static assets automatically.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 [build.environment]
   NODE_VERSION = "20"
