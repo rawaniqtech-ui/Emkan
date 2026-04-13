@@ -26,11 +26,13 @@ export const tajawal = Tajawal({
   preload: false, // secondary — don't preload
 });
 
-// IBM Plex Sans Arabic — the body font for readable paragraph text.
+// IBM Plex Sans Arabic — kept as a deep fallback only. Body copy now uses
+// HACEN (via --font-body), so IBM Plex is no longer in the active stack.
+// `preload: false` removes the <link rel=preload> from the critical path.
 export const ibmPlexArabic = IBM_Plex_Sans_Arabic({
   subsets: ['arabic'],
   weight: ['400', '500'],
   variable: '--font-ibm-plex-arabic',
   display: 'swap',
-  preload: true,
+  preload: false,
 });

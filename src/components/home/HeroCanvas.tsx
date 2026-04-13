@@ -171,12 +171,10 @@ export default function HeroCanvas() {
   return (
     <section
       ref={sectionRef}
-      className="h-[48vh] md:h-[180vh] lg:h-[220vh] relative overflow-x-clip"
-      style={{ backgroundColor: 'var(--surface-primary)' }}
+      className="h-[48vh] md:h-[180vh] lg:h-[220vh] relative overflow-x-clip bg-[#1E1535]"
     >
       <div
-        className="static md:sticky md:top-0 h-[48vh] md:h-screen w-full overflow-hidden"
-        style={{ backgroundColor: 'var(--surface-primary)' }}
+        className="static md:sticky md:top-0 h-[48vh] md:h-screen w-full overflow-hidden bg-[#1E1535]"
       >
         {/* ─── The canvas ─────────────────────────────── */}
         <canvas
@@ -186,20 +184,17 @@ export default function HeroCanvas() {
           }`}
         />
 
-        {/* ─── Top edge scrim + section label ─────────── */}
-        <div className="absolute top-0 left-0 right-0 h-16 md:h-32 bg-gradient-to-b from-[#F7F4EE] via-[#F7F4EE]/60 to-transparent pointer-events-none" />
-
         <div
           className={`absolute top-6 md:top-10 left-1/2 -translate-x-1/2 z-10 transition-all duration-700 ${
             firstFrameLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
           }`}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-purple/8 backdrop-blur-md border border-brand-purple/15">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-purple/10 backdrop-blur-md border border-brand-purple/20">
             <span className="relative flex h-1.5 w-1.5">
               <span className="absolute inline-flex h-full w-full rounded-full bg-brand-teal opacity-60 animate-ping" />
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-teal" />
             </span>
-            <span className="text-[11px] md:text-xs font-medium text-brand-purple tracking-[0.25em] uppercase">
+            <span className="text-[11px] md:text-xs font-medium text-brand-purple tracking-normal md:tracking-[0.25em] uppercase">
               رحلة إمكان
             </span>
           </div>
@@ -218,7 +213,7 @@ export default function HeroCanvas() {
               >
                 <span
                   className={`text-[10px] font-display tabular-nums tracking-wider transition-colors duration-500 ${
-                    isActive ? 'text-brand-purple' : 'text-brand-purple/50'
+                    isActive ? 'text-white' : 'text-white/40'
                   }`}
                 >
                   {c.number}
@@ -227,7 +222,7 @@ export default function HeroCanvas() {
                   className={`block rounded-full transition-all duration-500 ${
                     isActive
                       ? 'w-1.5 h-6 bg-brand-teal'
-                      : 'w-1.5 h-1.5 bg-brand-purple/30'
+                      : 'w-1.5 h-1.5 bg-white/30'
                   }`}
                 />
               </div>
@@ -235,9 +230,7 @@ export default function HeroCanvas() {
           })}
         </div>
 
-        {/* ─── Bottom scrim + chapter text overlay ────── */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 md:h-72 bg-gradient-to-t from-[#F7F4EE] via-[#F7F4EE]/85 to-transparent pointer-events-none" />
-
+        {/* ─── Chapter text overlay ────── */}
         <div className="absolute bottom-6 md:bottom-16 left-0 right-0 z-10 px-6 md:px-12 pointer-events-none">
           <div className="max-w-[720px] mx-auto text-center">
             {/* Key forces remount on chapter change for a clean fade/slide */}
@@ -254,7 +247,7 @@ export default function HeroCanvas() {
                 {current.title}
               </h2>
 
-              <p className="text-[13px] sm:text-sm md:text-base text-brand-text-muted leading-relaxed max-w-md mx-auto">
+              <p className="text-[13px] sm:text-sm md:text-base text-brand-purple/75 leading-relaxed max-w-md mx-auto">
                 {current.subtitle}
               </p>
             </div>
@@ -265,16 +258,16 @@ export default function HeroCanvas() {
         <div className="absolute bottom-5 md:bottom-6 left-0 right-0 z-10 pointer-events-none">
           <div className="max-w-[720px] mx-auto px-6 md:px-12">
             <div className="flex items-center gap-3">
-              <span className="text-[10px] font-display tabular-nums text-brand-purple/50">
+              <span className="text-[10px] font-display tabular-nums text-white/50">
                 {String(activeChapter + 1).padStart(2, '0')}
               </span>
-              <div className="flex-1 h-[2px] bg-brand-purple/10 rounded-full overflow-hidden">
+              <div className="flex-1 h-[2px] bg-white/10 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-l from-brand-teal to-brand-teal-light rounded-full transition-[width] duration-150 ease-out"
                   style={{ width: `${progress * 100}%` }}
                 />
               </div>
-              <span className="text-[10px] font-display tabular-nums text-brand-purple/50">
+              <span className="text-[10px] font-display tabular-nums text-white/50">
                 {String(CHAPTERS.length).padStart(2, '0')}
               </span>
             </div>
@@ -287,32 +280,31 @@ export default function HeroCanvas() {
             revealStarted ? 'opacity-0 translate-y-2' : 'opacity-60 translate-y-0'
           }`}
         >
-          <span className="text-[9px] text-brand-purple/60 tracking-[0.25em] uppercase">
+          <span className="text-[9px] text-white/60 tracking-[0.25em] uppercase">
             مرّر
           </span>
-          <span className="block w-[1px] h-4 bg-brand-purple/30 animate-breathe origin-top" />
+          <span className="block w-[1px] h-4 bg-white/30 animate-breathe origin-top" />
         </div>
 
         {/* ─── Premium loader (pre-first-frame only) ─────── */}
         {!firstFrameLoaded && (
           <div
-            className="absolute inset-0 z-20 flex items-center justify-center"
-            style={{ backgroundColor: 'var(--surface-primary)' }}
+            className="absolute inset-0 z-20 flex items-center justify-center bg-[#1E1535]"
           >
             <div className="text-center px-6">
               {/* Pulsing orbit */}
               <div className="relative w-14 h-14 mx-auto mb-6">
                 <span className="absolute inset-0 rounded-full border border-brand-teal/40 animate-ping" />
-                <span className="absolute inset-2 rounded-full border border-brand-purple/20" />
+                <span className="absolute inset-2 rounded-full border border-white/20" />
                 <span className="absolute inset-[22px] rounded-full bg-brand-teal" />
               </div>
-              <div className="font-display font-bold text-xl md:text-2xl text-brand-purple mb-1.5">
+              <div className="font-display font-bold text-xl md:text-2xl text-white mb-1.5">
                 إمكان المستقبل
               </div>
-              <p className="text-brand-text-muted text-[11px] md:text-xs tracking-wider mb-5">
+              <p className="text-white/60 text-[11px] md:text-xs tracking-wider mb-5">
                 جاري تحميل التجربة
               </p>
-              <div className="w-40 md:w-48 h-[2px] bg-brand-purple/10 mx-auto overflow-hidden rounded-full">
+              <div className="w-40 md:w-48 h-[2px] bg-white/10 mx-auto overflow-hidden rounded-full">
                 <div
                   className="h-full bg-gradient-to-l from-brand-teal to-brand-teal-light transition-all duration-300 rounded-full"
                   style={{ width: `${loadProgress * 100}%` }}

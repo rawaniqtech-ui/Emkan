@@ -64,40 +64,54 @@ export function useFrameSequence(
       return;
     }
 
-    const frames: HTMLImageElement[] = [];
+    const frames: HTMLImageElement[] = new Array(options.frameCount);
     let loaded = 0;
 
-    for (let i = 1; i <= options.frameCount; i++) {
+    const startLoad = (i: number) => {
       const img = new Image();
       const num = String(i).padStart(options.padLength, '0');
-      img.src = `${options.directory}${options.prefix}${num}${options.extension}`;
-      // Boost the first 8 frames so the reveal can start instantly even on
-      // mid-tier connections — the rest fill in as the user begins to scroll.
-      if (i <= 8) {
-        img.fetchPriority = 'high';
-      } else if (i > options.frameCount - 4) {
-        // The held end-state frames also get a small boost so the final
-        // assembled-logo state is ready when scrolling completes.
+      // Critical frames (start + end) get high priority; everything in
+      // between is low-priority and queued via requestIdleCallback so the
+      // initial paint isn't competing with 80+ parallel image downloads.
+      if (i <= 8 || i > options.frameCount - 4) {
         img.fetchPriority = 'high';
       } else {
         img.fetchPriority = 'low';
       }
-
       img.onload = () => {
         loaded++;
         setLoadProgress(loaded / options.frameCount);
         if (i === 1) setFirstFrameLoaded(true);
         if (loaded === options.frameCount) setIsLoaded(true);
       };
-
       img.onerror = () => {
         loaded++;
-        if (i === 1) setFirstFrameLoaded(true); // unblock UI even on first-frame error
+        if (i === 1) setFirstFrameLoaded(true);
         if (loaded === options.frameCount) setIsLoaded(true);
       };
+      img.src = `${options.directory}${options.prefix}${num}${options.extension}`;
+      frames[i - 1] = img;
+    };
 
-      frames.push(img);
-    }
+    // Critical frames kick off immediately so the reveal can start instantly
+    // and the final poster is ready as soon as the user scrolls to the end.
+    for (let i = 1; i <= 8; i++) startLoad(i);
+    for (let i = Math.max(9, options.frameCount - 3); i <= options.frameCount; i++) startLoad(i);
+
+    // Mid-range frames (9 .. count-4) are queued on the browser's idle time
+    // so they don't fight with LCP / hydration. Falls back to setTimeout on
+    // Safari / older browsers that lack requestIdleCallback.
+    const idleQueue = (cb: () => void) => {
+      type IdleWindow = Window & { requestIdleCallback?: (cb: () => void) => number };
+      const w = typeof window !== 'undefined' ? (window as IdleWindow) : undefined;
+      if (w?.requestIdleCallback) w.requestIdleCallback(cb);
+      else setTimeout(cb, 200);
+    };
+    idleQueue(() => {
+      for (let i = 9; i <= options.frameCount - 4; i++) {
+        if (!frames[i - 1]) startLoad(i);
+      }
+    });
 
     framesRef.current = frames;
   }, [options.frameCount, options.directory, options.prefix, options.extension, options.padLength]);
@@ -119,10 +133,10 @@ export function useFrameSequence(
       const cssW = canvas.clientWidth;
       const cssH = canvas.clientHeight;
 
-      // Fill with the unified site background so the canvas section blends
-      // seamlessly into its neighbors. The HeroCanvas top/bottom scrims hide
-      // the slightly-warmer video rim at the edges.
-      ctx.fillStyle = '#F7F4EE';
+      // Dark purple matches the surrounding HeroCanvas section (always dark
+      // regardless of site theme), so the padding around the contain-fit
+      // image blends into the section instead of showing a bright rim.
+      ctx.fillStyle = '#1E1535';
       ctx.fillRect(0, 0, cssW, cssH);
 
       const imgRatio = img.naturalWidth / img.naturalHeight;
