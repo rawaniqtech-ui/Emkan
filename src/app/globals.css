@@ -73,8 +73,10 @@
   --color-surface-secondary: var(--surface-secondary);
   --color-surface-elevated: var(--surface-elevated);
   --color-surface-card: var(--surface-card);
-  --font-display: var(--font-tajawal);
-  --font-body: var(--font-ibm-plex-arabic);
+  /* Display: HACEN Maghreb LT (brand font, matches logo calligraphy)
+     falling back to Tajawal for Latin glyphs + system fonts. */
+  --font-display: var(--font-hacen), var(--font-tajawal), system-ui, sans-serif;
+  --font-body: var(--font-ibm-plex-arabic), var(--font-tajawal), system-ui, sans-serif;
 }
 
 /* Selection */

@@ -43,3 +43,11 @@ next-env.d.ts
 # Claude Code (local dev tooling — personal)
 .claude/
 CLAUDE.md
+
+# Font specimen PDFs and loose font files in root (the actual project font
+# lives in src/app/fonts/). Keep this folder clean.
+/font*.pdf
+/*.TTF
+/*.ttf
+/*.otf
+/*.OTF

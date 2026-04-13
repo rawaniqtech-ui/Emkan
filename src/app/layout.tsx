@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
-import { tajawal, ibmPlexArabic } from '@/lib/fonts';
+import { hacenMaghreb, tajawal, ibmPlexArabic } from '@/lib/fonts';
 import { SITE_METADATA } from '@/lib/constants';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -38,7 +38,7 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={`${tajawal.variable} ${ibmPlexArabic.variable} antialiased`}
+      className={`${hacenMaghreb.variable} ${tajawal.variable} ${ibmPlexArabic.variable} antialiased`}
       suppressHydrationWarning
     >
       <head>
