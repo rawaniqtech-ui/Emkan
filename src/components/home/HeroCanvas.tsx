@@ -24,7 +24,7 @@ export default function HeroCanvas() {
   return (
     <section
       ref={sectionRef}
-      className="h-[220vh] md:h-[340vh] lg:h-[440vh] relative section-vignette"
+      className="h-[220vh] md:h-[340vh] lg:h-[440vh] relative section-vignette overflow-x-clip"
       style={{ backgroundColor: '#F6F2E6' }}
     >
       <div

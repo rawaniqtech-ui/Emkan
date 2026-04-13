@@ -312,7 +312,7 @@ function SchoolPartners() {
   }, []);
 
   return (
-    <section className="py-12 md:py-20 lg:py-24 px-4 md:px-12 bg-surface-secondary">
+    <section className="py-12 md:py-20 lg:py-24 px-4 md:px-12 bg-surface-secondary relative overflow-hidden">
       <div ref={ref} className="max-w-[900px] mx-auto">
         <SectionHeading label={content.services.schoolPartners.sectionLabel} title={content.services.schoolPartners.title} />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">

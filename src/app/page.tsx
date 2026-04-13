@@ -34,12 +34,12 @@ export default function Home() {
     <>
 
       {/* 1. Hero */}
-      <div id="hero">
+      <div id="hero" className="overflow-x-clip">
         <HeroSection />
       </div>
 
       {/* 1b. Brand reveal — scroll-driven frame sequence */}
-      <div id="brand-reveal">
+      <div id="brand-reveal" className="overflow-x-clip">
         <HeroCanvas />
       </div>
 

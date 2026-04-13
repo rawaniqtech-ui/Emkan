@@ -317,7 +317,7 @@ function TeamSection() {
   }, []);
 
   return (
-    <section className="py-12 md:py-20 lg:py-28 px-4 md:px-12 bg-surface-secondary">
+    <section className="py-12 md:py-20 lg:py-28 px-4 md:px-12 bg-surface-secondary relative overflow-hidden">
       <div ref={ref} className="max-w-[1000px] mx-auto">
         <SectionHeading label={content.about.team.sectionLabel} title={content.about.team.title} subtitle="فريق من أفضل الأخصائيين المؤهلين والمتخصصين" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">

@@ -184,7 +184,7 @@ export default function HeroCards3D() {
       {/* 3D Carousel — left on desktop */}
       <div
         ref={containerRef}
-        className="relative w-full h-[220px] sm:h-[300px] md:h-[380px] lg:h-[460px] flex items-center justify-center cursor-grab active:cursor-grabbing select-none order-1"
+        className="relative w-full h-[220px] sm:h-[300px] md:h-[380px] lg:h-[460px] flex items-center justify-center cursor-grab active:cursor-grabbing select-none order-1 overflow-x-clip"
         style={{ perspective: '1000px' }}
       >
         {/* Glow */}
