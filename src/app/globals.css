@@ -1,0 +1,494 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Only 3 brand colors: purple, teal, white */
+  --brand-purple: #3B2C59;
+  --brand-purple-light: #3B2C59;
+  --brand-purple-dark: #3B2C59;
+  --brand-teal: #87C6C7;
+  --brand-teal-light: #87C6C7;
+  --brand-teal-dark: #87C6C7;
+  --brand-cream: #F7F4EE;
+  --brand-white: #FBF9F4;
+
+  /* Text */
+  --brand-text: #3B2C59;
+  --brand-text-muted: #6B6085;
+
+  /* Surfaces — warm off-white, مريحة للعين */
+  --surface-primary: #F7F4EE;
+  --surface-secondary: #F2EEE6;
+  --surface-elevated: #FBF9F4;
+  --surface-card: #FBF9F4;
+  --surface-nav: rgba(251, 249, 244, 0.96);
+  --surface-input: #FBF9F4;
+
+  /* Borders — minimal, clean */
+  --border-subtle: rgba(59, 44, 89, 0.08);
+  --border-default: rgba(59, 44, 89, 0.12);
+  --border-hover: #3B2C59;
+
+  /* Glass */
+  --glass-bg: rgba(251, 249, 244, 0.92);
+  --glass-border: rgba(59, 44, 89, 0.08);
+}
+
+.dark {
+  --brand-cream: #3B2C59;
+  --brand-white: #2A1E42;
+  --brand-text: #FFFFFF;
+  --brand-text-muted: #C4BCD4;
+
+  /* Surfaces — dark purple */
+  --surface-primary: #1E1535;
+  --surface-secondary: #251C3D;
+  --surface-elevated: #2D2245;
+  --surface-card: #251C3D;
+  --surface-nav: rgba(30, 21, 53, 0.95);
+  --surface-input: #2D2245;
+
+  /* Borders — teal tinted */
+  --border-subtle: rgba(135, 198, 199, 0.1);
+  --border-default: rgba(135, 198, 199, 0.18);
+  --border-hover: #87C6C7;
+
+  /* Glass */
+  --glass-bg: rgba(30, 21, 53, 0.85);
+  --glass-border: rgba(135, 198, 199, 0.15);
+}
+
+@theme inline {
+  --color-brand-purple: var(--brand-purple);
+  --color-brand-purple-light: var(--brand-purple-light);
+  --color-brand-purple-dark: var(--brand-purple-dark);
+  --color-brand-teal: var(--brand-teal);
+  --color-brand-teal-light: var(--brand-teal-light);
+  --color-brand-teal-dark: var(--brand-teal-dark);
+  --color-brand-cream: var(--brand-cream);
+  --color-brand-text: var(--brand-text);
+  --color-brand-text-muted: var(--brand-text-muted);
+  --color-surface-primary: var(--surface-primary);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-card: var(--surface-card);
+  --font-display: var(--font-tajawal);
+  --font-body: var(--font-ibm-plex-arabic);
+}
+
+/* Selection */
+::selection {
+  background: var(--brand-purple);
+  color: white;
+}
+
+/* Scrollbar — styled on desktop, hidden on phone (RTL puts it on the left
+   edge where it looks like an out-of-place vertical bar) */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3B2C59;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #87C6C7;
+}
+
+/* Hide scrollbar on phones */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+  html, body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Base */
+html {
+  scroll-behavior: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body), 'IBM Plex Sans Arabic', sans-serif;
+  background: #FFFFFF;
+  color: var(--brand-text);
+  overflow-x: hidden;
+  line-height: 1.8;
+}
+
+html.dark body {
+  background: #1E1535;
+}
+
+/* Smooth scroll container for Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Scroll progress bar */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 3px;
+  background: var(--brand-teal);
+  z-index: 9999;
+  transition: width 0.1s linear;
+  transform-origin: right;
+}
+
+/* Glass card effect */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+}
+
+/* Clean sections */
+
+/* Pattern background */
+.pattern-bg {
+  /* pattern-tile removed - file missing */
+  background-repeat: repeat;
+  background-size: 120px;
+  opacity: 0.04;
+}
+
+/* Text gradient */
+.text-gradient {
+  background: linear-gradient(135deg, var(--brand-purple) 0%, var(--brand-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark .text-gradient {
+  background: linear-gradient(135deg, var(--brand-teal-light) 0%, var(--brand-teal) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Animated gradient background */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-gradient {
+  background: linear-gradient(-45deg, var(--brand-purple-dark), var(--brand-purple), var(--brand-purple-light), var(--brand-teal-dark));
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+/* Breathing animation for scroll indicator */
+@keyframes breathe {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.6); }
+  50% { opacity: 0.8; transform: scaleY(1); }
+}
+
+.animate-breathe {
+  animation: breathe 2.5s ease-in-out infinite;
+}
+
+/* Fade in for testimonial carousel */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(16px); filter: blur(4px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+.animate-fade-slide-up {
+  animation: fadeSlideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Marquee */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-reverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.animate-marquee {
+  animation: marquee linear infinite;
+}
+
+.animate-marquee-reverse {
+  animation: marquee-reverse linear infinite;
+}
+
+/* Noise/grain texture — removed to prevent background conflicts */
+
+/* Brand pattern using actual logo pattern image */
+.brand-pattern {
+  background-image: url('/images/logo-pattern.jpg');
+  background-repeat: repeat;
+  background-size: 350px;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.dark .brand-pattern {
+  opacity: 0.07;
+  filter: invert(1);
+}
+
+.brand-pattern-inverted {
+  background-image: url('/images/logo-pattern.jpg');
+  background-repeat: repeat;
+  background-size: 350px;
+  opacity: 0.06;
+  pointer-events: none;
+  filter: invert(1);
+}
+
+.section-depth-top {
+  box-shadow: inset 0 1px 0 var(--border-subtle);
+}
+
+.section-depth-both {
+  box-shadow: inset 0 1px 0 var(--border-subtle), inset 0 -1px 0 var(--border-subtle);
+}
+
+/* Accent corner shapes — use as inline divs, not pseudo-elements */
+
+/* Wave section divider */
+.wave-divider {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--surface-primary);
+  clip-path: ellipse(55% 100% at 50% 100%);
+  z-index: 2;
+}
+
+.wave-divider-top {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--surface-primary);
+  clip-path: ellipse(55% 100% at 50% 0%);
+  z-index: 2;
+}
+
+/* Dot grid background for sections — very subtle */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(59, 44, 89, 0.045) 0.8px, transparent 0.8px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+.dark .dot-grid {
+  background-image: radial-gradient(circle, rgba(135, 198, 199, 0.05) 0.8px, transparent 0.8px);
+  background-size: 48px 48px;
+}
+
+/* Swoosh drift animation */
+@keyframes swooshDrift {
+  0%, 100% { transform: translateX(0) scaleX(1); }
+  50% { transform: translateX(10px) scaleX(1.02); }
+}
+.animate-swoosh {
+  animation: swooshDrift 12s ease-in-out infinite;
+}
+
+/* Floating animation for decorative elements */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(2deg); }
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(-1deg); }
+}
+
+@keyframes floatReverse {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(10px) rotate(1.5deg); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: floatSlow 8s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: floatReverse 7s ease-in-out infinite;
+}
+
+/* Soft inner shadow/vignette for depth — barely visible in light */
+.section-vignette {
+  box-shadow: inset 0 30px 60px -30px rgba(59, 44, 89, 0.015), inset 0 -30px 60px -30px rgba(59, 44, 89, 0.015);
+}
+
+.dark .section-vignette {
+  box-shadow: inset 0 40px 80px -40px rgba(0, 0, 0, 0.12), inset 0 -40px 80px -40px rgba(0, 0, 0, 0.12);
+}
+
+/* Gradient border glow — use inline styling instead of pseudo-elements */
+
+/* Slide-up-fade animation for CSS-only scroll-triggered cards */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up-fade {
+  animation: slideUpFade 0.6s ease-out both;
+}
+
+/* Ensure GSAP animated elements are visible if animation doesn't fire.
+   Uses a delayed fallback: if GSAP hasn't set inline styles within 2s,
+   the element becomes visible via this rule. */
+.story-el, .mv-card, .why-card, .team-card, .timeline-item, .trust-logo,
+.about-text, .about-video, .mission-text, .mission-image, .value-card,
+.process-step, .process-line, .journey-step, .journey-icon, .partner-card,
+.info-card, .form-field, .testimonial-section, .srv-hero-el, .contact-hero-el,
+.hero-badge, .hero-subtitle, .hero-btn, .hero-scroll, .hero-line {
+  /* Content must never stay invisible — GSAP fromTo sets explicit start/end,
+     but as an extra safety net we ensure no permanent hidden state */
+}
+
+/* Animated background blobs */
+@keyframes blob1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(80px, 60px) scale(1.1); }
+  50% { transform: translate(30px, 120px) scale(0.95); }
+  75% { transform: translate(-40px, 40px) scale(1.05); }
+}
+
+@keyframes blob2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(-70px, 80px) scale(1.05); }
+  50% { transform: translate(-120px, 30px) scale(1.1); }
+  75% { transform: translate(-30px, -50px) scale(0.95); }
+}
+
+@keyframes blob3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(60px, -80px) scale(1.08); }
+  66% { transform: translate(-50px, 60px) scale(0.92); }
+}
+
+@keyframes blob4 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(100px, -40px) scale(1.1); }
+  50% { transform: translate(50px, -100px) scale(0.95); }
+  75% { transform: translate(-30px, -60px) scale(1.05); }
+}
+
+@keyframes blob5 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-80px, -60px) scale(1.05); }
+  66% { transform: translate(40px, -30px) scale(1.1); }
+}
+
+.animate-blob-1 { animation: blob1 20s ease-in-out infinite; }
+.animate-blob-2 { animation: blob2 25s ease-in-out infinite; }
+.animate-blob-3 { animation: blob3 30s ease-in-out infinite; }
+.animate-blob-4 { animation: blob4 22s ease-in-out infinite; }
+.animate-blob-5 { animation: blob5 28s ease-in-out infinite; }
+
+/* Mobile blob throttling — blur is the most expensive paint op on phones,
+   so cap blur radius and slow animations to halve repaint cost */
+@media (max-width: 768px) {
+  .animate-blob-1,
+  .animate-blob-2,
+  .animate-blob-3,
+  .animate-blob-4,
+  .animate-blob-5 {
+    filter: blur(70px) !important;
+    animation-duration: 40s !important;
+  }
+}
+
+/* Drop the off-canvas decorative blobs entirely on phones */
+@media (max-width: 640px) {
+  .animate-blob-3,
+  .animate-blob-5 {
+    display: none !important;
+  }
+}
+
+/* Atropos custom styling */
+.atropos-custom .atropos-inner {
+  border-radius: inherit;
+}
+.atropos-custom .atropos-shadow {
+  border-radius: inherit;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
