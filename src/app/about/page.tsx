@@ -17,6 +17,8 @@ import { CARD_DIRECTIONS, CARD_EASINGS } from '@/lib/animations';
 
 const TiltCard = dynamic(() => import('@/components/shared/TiltCard'), { ssr: false });
 const ParticlesBackground = dynamic(() => import('@/components/shared/ParticlesBackground'), { ssr: false });
+const ScrollMarquee = dynamic(() => import('@/components/shared/ScrollMarquee'));
+const WaveTransition = dynamic(() => import('@/components/shared/WaveTransition'));
 const TypeAnimation = dynamic(
   () => import('react-type-animation').then((m) => m.TypeAnimation),
   { ssr: false }
@@ -38,10 +40,10 @@ export default function AboutPage() {
       <SoundWaveRow color="purple" />
       <NumbersSection />
       <TeamSection />
-      <SwooshCurve color="teal" width={500} className="mx-auto opacity-[0.25]" />
+      <WaveTransition direction="into-light" />
       <Timeline />
-      <SoundWaveRow color="teal" />
-      <AboutCTA />
+      <WaveTransition direction="out-of-light" />
+      <ScrollMarquee text="من نحن" />
     </>
   );
 }
@@ -372,12 +374,17 @@ function Timeline() {
   }, []);
 
   return (
-    <section className="py-12 md:py-20 lg:py-28 px-4 md:px-12 bg-brand-purple-dark relative overflow-hidden">
+    <section className="force-light py-12 md:py-20 lg:py-28 px-4 md:px-12 bg-surface-primary relative overflow-hidden">
+      {/* Soft decor matching the Journey island on home */}
+      <div className="absolute -top-20 -left-20 w-[400px] h-[400px] bg-brand-teal/[0.05] rounded-full blur-[120px]" />
+      <div className="absolute -bottom-20 -right-20 w-[350px] h-[350px] bg-brand-purple/[0.04] rounded-full blur-[100px]" />
+      <SoundWaveBars color="teal" size="md" className="absolute top-10 right-8 opacity-[0.18] animate-float hidden md:flex" />
+      <SoundWaveBars color="purple" size="sm" className="absolute bottom-12 left-8 opacity-[0.15] animate-float-reverse hidden md:flex" />
       <div className="absolute inset-0 pattern-bg opacity-[0.02]" />
       <div className="relative max-w-[700px] mx-auto">
         <SectionHeading label={content.about.timeline.sectionLabel} title={content.about.timeline.title}  />
         <div ref={ref} className="relative">
-          <div className="timeline-line absolute right-4 md:right-1/2 top-0 bottom-0 w-[2px] bg-brand-teal/30 md:translate-x-1/2" />
+          <div className="timeline-line absolute right-4 md:right-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-brand-teal via-brand-purple-light to-brand-teal md:translate-x-1/2" />
           <div className="space-y-8 md:space-y-12">
             {content.about.timeline.milestones.map((m, i) => (
               <div key={i} className={`timeline-item relative flex items-center gap-4 md:gap-8 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
@@ -399,30 +406,3 @@ function Timeline() {
   );
 }
 
-/* ── CTA ── */
-function AboutCTA() {
-  return (
-    <section className="py-14 md:py-24 lg:py-28 px-4 md:px-12 bg-surface-primary relative overflow-hidden section-vignette">
-      {/* Layered texture */}
-      <div className="absolute -top-20 -right-20 w-[600px] h-[600px] bg-brand-teal/10 rounded-full blur-[140px] animate-blob-2 pointer-events-none" />
-      <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-brand-purple/8 rounded-full blur-[130px] animate-blob-4 pointer-events-none" />
-      <SoundWaveBars color="purple" size="md" className="absolute top-12 left-8 md:top-16 md:left-16 opacity-[0.18] animate-float" />
-      <SoundWaveBars color="teal" size="sm" className="absolute bottom-10 right-8 md:bottom-16 md:right-16 opacity-[0.2] animate-float-reverse" />
-      <SwooshCurve color="teal" width={280} className="absolute top-20 right-20 opacity-[0.12] hidden lg:block" />
-
-      <div className="relative z-[2] max-w-[700px] mx-auto text-center">
-        <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-4 block">ابدأ الآن</span>
-        <h2 className="font-display font-bold text-2xl md:text-4xl text-brand-text mb-5 leading-tight">
-          هدفنا ليس علاج المشكلة فقط
-        </h2>
-        <p className="text-brand-text-muted text-base md:text-lg mb-10 leading-relaxed max-w-xl mx-auto">
-          بل بناء أساس قوي للتواصل والتعلم ينعكس إيجابًا على مستقبل المستفيد. تواصل معنا اليوم وابدأ رحلة طفلك.
-        </p>
-        <div className="flex gap-4 justify-center flex-wrap">
-          <Button href="/contact" size="lg">احجز استشارة مجانية</Button>
-          <Button href="/services" variant="secondary" size="lg">تعرف على خدماتنا</Button>
-        </div>
-      </div>
-    </section>
-  );
-}

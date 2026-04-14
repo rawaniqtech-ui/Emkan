@@ -16,6 +16,8 @@ import { SoundWaveRow, SwooshCurve, SoundWaveBars } from '@/components/shared/Br
 
 const TiltCard = dynamic(() => import('@/components/shared/TiltCard'), { ssr: false });
 const ParticlesBackground = dynamic(() => import('@/components/shared/ParticlesBackground'), { ssr: false });
+const ScrollMarquee = dynamic(() => import('@/components/shared/ScrollMarquee'));
+const WaveTransition = dynamic(() => import('@/components/shared/WaveTransition'));
 const TypeAnimation = dynamic(
   () => import('react-type-animation').then((m) => m.TypeAnimation),
   { ssr: false }
@@ -39,9 +41,8 @@ export default function ServicesPage() {
       <ProcessSteps />
       <SoundWaveRow color="purple" />
       <ServicesStats />
+      <ScrollMarquee text="خدماتنا" />
       <SchoolPartners />
-      <SwooshCurve color="purple" width={500} className="mx-auto opacity-[0.25]" />
-      <ServicesCTA />
     </>
   );
 }
@@ -63,7 +64,8 @@ function ServicesHero() {
         <h1 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-7xl text-brand-text mb-6 leading-[1.1]">
           {content.services.hero.title}
         </h1>
-        <TypeAnimation sequence={[content.services.hero.subtitle]} wrapper="p" speed={30} className="text-white/70 text-base md:text-xl max-w-xl mx-auto mb-8" />
+        <TypeAnimation sequence={[content.services.hero.subtitle]} wrapper="p" speed={30} className="text-white/70 text-base md:text-xl max-w-xl mx-auto" />
+        <div className="w-16 h-[2px] bg-brand-teal mx-auto my-8" />
         <div className="flex gap-4 justify-center flex-wrap">
           <Button href="/contact" variant="white" size="md">احجز استشارة</Button>
           <Button href="#services" variant="ghost" size="md" className="text-white border-white/20 hover:bg-white/10">استكشف الخدمات</Button>
@@ -130,7 +132,16 @@ function ServiceItem({ service, index }: { service: typeof content.services.item
   const ref = useRef<HTMLDivElement>(null);
   const Icon = SERVICE_ICONS[index];
   const isEven = index % 2 === 0;
-  const videos = ['/videos/therapy-session.mp4', '/videos/children-learning.mp4', '/videos/children-classroom.mp4', '/videos/children-playing.mp4', '/videos/services-hero.mp4', '/videos/therapy-session.mp4', '/videos/children-learning.mp4'];
+  // One unique, context-matched video per service — no more duplicates.
+  const videos = [
+    '/videos/service-assessment.mp4',  // 0 — التقييم والتشخيص
+    '/videos/children-learning.mp4',   // 1 — العلاج والتأهيل
+    '/videos/service-hearing.mp4',     // 2 — التأهيل السمعي
+    '/videos/children-playing.mp4',    // 3 — التدخل المبكر
+    '/videos/service-behavior.mp4',    // 4 — تعديل السلوك
+    '/videos/service-education.mp4',   // 5 — الخدمات التعليمية المساندة
+    '/videos/service-family.mp4',      // 6 — خدمات الأسر
+  ];
 
   useEffect(() => {
     if (!ref.current) return;
@@ -334,27 +345,3 @@ function SchoolPartners() {
   );
 }
 
-/* ── CTA ── */
-function ServicesCTA() {
-  return (
-    <section className="relative py-20 md:py-28 overflow-hidden">
-      <LazyVideo
-        src="/videos/children-playing.mp4"
-        className="absolute inset-0 w-full h-full object-cover"
-        overlayClassName="absolute inset-0 bg-brand-purple/85 dark:bg-brand-purple-dark/90"
-      />
-      <ParticlesBackground inverted />
-      <div className="relative z-[2] max-w-lg mx-auto text-center px-4">
-        <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-4 block">ابدأ اليوم</span>
-        <h2 className="font-display font-bold text-2xl md:text-4xl text-brand-text mb-5">
-          {content.services.cta.title}
-        </h2>
-        <p className="text-brand-text-muted text-base md:text-lg mb-10">{content.services.cta.subtitle}</p>
-        <div className="flex gap-4 justify-center flex-wrap">
-          <Button href="/contact" variant="white" size="lg">{content.services.cta.button}</Button>
-          <Button href={content.contact.info.whatsapp} variant="ghost" size="lg" className="text-white border-white/20 hover:bg-white/10">واتساب</Button>
-        </div>
-      </div>
-    </section>
-  );
-}

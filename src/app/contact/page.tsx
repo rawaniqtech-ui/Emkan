@@ -10,6 +10,7 @@ const TypeAnimation = dynamic(
   { ssr: false }
 );
 import Button from '@/components/shared/Button';
+import LazyVideo from '@/components/shared/LazyVideo';
 import {
   IconPhone,
   IconEmail,
@@ -17,7 +18,6 @@ import {
   IconChat,
 } from '@/components/shared/BrandIcons';
 import {
-  SoundWaveRow,
   SoundWaveBars,
   SwooshCurve,
 } from '@/components/shared/BrandDecor';
@@ -31,14 +31,12 @@ export default function ContactPage() {
   return (
     <>
       <ContactHero />
-      <SoundWaveRow color="teal" />
       <QuickContactStrip />
       <ContactContent />
       <FaqSection />
-      <SwooshCurve color="teal" width={500} className="mx-auto opacity-[0.25]" />
+      <RegistrationSection />
+      <EmploymentSection />
       <WorkingHours />
-      <SoundWaveRow color="purple" />
-      <ContactBottomCTA />
     </>
   );
 }
@@ -67,8 +65,14 @@ function ContactHero() {
   ];
 
   return (
-    <section className="pt-24 pb-12 md:pt-40 md:pb-24 px-5 md:px-6 relative overflow-hidden bg-surface-primary section-vignette">
-      {/* Layered background */}
+    <section className="pt-20 pb-6 md:pt-28 md:pb-10 px-5 md:px-6 relative overflow-hidden bg-surface-primary section-vignette">
+      {/* Background video — warm parent + child footage */}
+      <LazyVideo
+        src="/videos/contact-hero.mp4"
+        className="absolute inset-0 w-full h-full object-cover"
+        overlayClassName="absolute inset-0 bg-surface-primary/85 dark:bg-[#0F0B1A]/78"
+      />
+      {/* Layered background decor over the video */}
       <div className="absolute -top-32 -right-32 w-[700px] h-[700px] bg-brand-teal/12 rounded-full blur-[140px] animate-blob-2 pointer-events-none" />
       <div className="absolute -bottom-40 -left-32 w-[600px] h-[600px] bg-brand-purple/10 rounded-full blur-[130px] animate-blob-4 pointer-events-none" />
       <SoundWaveBars color="teal" size="lg" className="absolute top-32 right-12 opacity-[0.22] animate-float hidden md:flex" />
@@ -76,7 +80,7 @@ function ContactHero() {
       <SwooshCurve color="teal" width={360} className="absolute top-24 left-20 opacity-[0.15] hidden lg:block" />
 
       <div ref={ref} className="relative z-[2] max-w-3xl mx-auto text-center">
-        <span className="contact-hero-el inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-teal/10 border border-brand-teal/25 mb-6">
+        <span className="contact-hero-el inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-teal/10 border border-brand-teal/25 mb-4">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-teal opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-teal" />
@@ -84,9 +88,9 @@ function ContactHero() {
           <span className="text-xs text-brand-teal font-medium tracking-wider">نحن هنا من أجلك</span>
         </span>
 
-        <div className="contact-hero-el w-12 h-[2px] bg-brand-teal mx-auto mb-6" />
+        <div className="contact-hero-el w-12 h-[2px] bg-brand-teal mx-auto mb-4" />
 
-        <h1 className="contact-hero-el font-display font-bold text-3xl sm:text-4xl md:text-6xl text-brand-text mb-5 leading-[1.1]">
+        <h1 className="contact-hero-el font-display font-bold text-3xl sm:text-4xl md:text-5xl text-brand-text mb-3 leading-[1.1]">
           {content.contact.hero.title}
         </h1>
 
@@ -94,11 +98,11 @@ function ContactHero() {
           sequence={[content.contact.hero.subtitle]}
           wrapper="p"
           speed={30}
-          className="contact-hero-el text-brand-text-muted text-base sm:text-lg max-w-xl mx-auto leading-relaxed"
+          className="contact-hero-el text-brand-text-muted text-sm sm:text-base max-w-xl mx-auto leading-relaxed"
         />
 
         {/* Stats row */}
-        <div className="contact-hero-el mt-12 grid grid-cols-3 max-w-lg mx-auto gap-4">
+        <div className="contact-hero-el mt-6 grid grid-cols-3 max-w-lg mx-auto gap-4">
           {stats.map((s, i) => (
             <div key={i} className="text-center">
               <div className="font-display font-bold text-xl md:text-3xl text-brand-teal">{s.value}</div>
@@ -163,7 +167,7 @@ function QuickContactStrip() {
   ];
 
   return (
-    <section className="py-10 md:py-16 px-4 md:px-12 bg-surface-primary relative overflow-hidden">
+    <section className="py-6 md:py-8 px-4 md:px-12 bg-surface-primary relative overflow-hidden">
       <div ref={ref} className="relative z-[2] max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-5">
         {tiles.map((tile, i) => (
           <QuickContactTile key={i} {...tile} />
@@ -283,7 +287,7 @@ function ContactContent() {
   }, []);
 
   return (
-    <section className="py-12 md:py-20 lg:py-24 px-4 md:px-12 bg-surface-primary relative overflow-hidden section-vignette">
+    <section className="py-8 md:py-12 px-4 md:px-12 bg-surface-primary relative overflow-hidden section-vignette">
       {/* Layered texture */}
       <div className="absolute -top-20 -right-20 w-[600px] h-[600px] bg-brand-teal/10 rounded-full blur-[140px] animate-blob-2 pointer-events-none" />
       <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-brand-purple/8 rounded-full blur-[130px] animate-blob-4 pointer-events-none" />
@@ -293,22 +297,22 @@ function ContactContent() {
 
       <div
         ref={ref}
-        className="relative z-[2] max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-[1.1fr_0.9fr] gap-8 md:gap-14"
+        className="relative z-[2] max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-[1.1fr_0.9fr] gap-6 md:gap-10"
       >
         <div>
-          <div className="mb-8">
-            <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-3 block">أرسل رسالة</span>
-            <h2 className="font-display font-bold text-2xl md:text-4xl text-brand-text leading-tight">
+          <div className="mb-5">
+            <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-2 block">أرسل رسالة</span>
+            <h2 className="font-display font-bold text-xl md:text-3xl text-brand-text leading-tight">
               نسعد بسماع قصّتك
             </h2>
-            <p className="text-brand-text-muted mt-3 text-sm md:text-base">
+            <p className="text-brand-text-muted mt-2 text-sm">
               املأ النموذج وسيتواصل معك فريقنا خلال ٢٤ ساعة.
             </p>
           </div>
           <ContactForm />
         </div>
 
-        <div className="space-y-5">
+        <div className="space-y-3">
           <MapCard />
 
           <ContactInfoCard
@@ -383,7 +387,7 @@ function SocialDot({ name }: { name: string }) {
 
 function MapCard() {
   return (
-    <div className="info-card aspect-[16/10] md:aspect-[4/3] rounded-2xl bg-surface-secondary border border-[var(--border-subtle)] flex items-center justify-center overflow-hidden relative group">
+    <div className="info-card aspect-[16/7] md:aspect-[16/9] rounded-2xl bg-surface-secondary border border-[var(--border-subtle)] flex items-center justify-center overflow-hidden relative group">
       {/* Grid lines pattern */}
       <div
         className="absolute inset-0 opacity-30"
@@ -520,7 +524,7 @@ function ContactForm() {
   ];
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       <div className="form-field">
         <label htmlFor={`${formId}-name`} className="block text-sm font-medium text-brand-text mb-2">
           {content.contact.form.name} <span className="text-red-400">*</span>
@@ -735,30 +739,30 @@ function FaqSection() {
   }, []);
 
   return (
-    <section className="py-12 md:py-20 lg:py-24 px-4 md:px-12 bg-surface-secondary relative overflow-hidden section-vignette">
+    <section className="py-8 md:py-12 px-4 md:px-12 bg-surface-secondary relative overflow-hidden section-vignette">
       <div className="absolute -top-20 -left-20 w-[500px] h-[500px] bg-brand-teal/10 rounded-full blur-[140px] animate-blob-1 pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-[500px] h-[500px] bg-brand-purple/8 rounded-full blur-[130px] animate-blob-3 pointer-events-none" />
       <SoundWaveBars color="purple" size="md" className="absolute top-12 right-8 md:top-16 md:right-16 opacity-[0.2] animate-float" />
       <SwooshCurve color="teal" width={280} className="absolute bottom-20 left-20 opacity-[0.12] hidden lg:block" />
 
       <div ref={ref} className="relative z-[2] max-w-[820px] mx-auto">
-        <div className="text-center mb-12">
-          <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-3 block">الأسئلة الشائعة</span>
-          <h2 className="font-display font-bold text-2xl md:text-4xl text-brand-text leading-tight">
+        <div className="text-center mb-6">
+          <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-2 block">الأسئلة الشائعة</span>
+          <h2 className="font-display font-bold text-xl md:text-3xl text-brand-text leading-tight">
             قد تكون إجابتك هنا
           </h2>
-          <p className="text-brand-text-muted mt-3 text-sm md:text-base max-w-lg mx-auto">
+          <p className="text-brand-text-muted mt-2 text-sm max-w-lg mx-auto">
             إجابات سريعة على الأسئلة الأكثر تكراراً. لم تجد ما تبحث عنه؟ راسلنا مباشرة.
           </p>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2">
           {FAQS.map((item, i) => {
             const isOpen = openIndex === i;
             return (
               <div
                 key={i}
-                className={`faq-item rounded-2xl border transition-all duration-300 overflow-hidden ${
+                className={`faq-item rounded-xl border transition-all duration-300 overflow-hidden ${
                   isOpen
                     ? 'bg-surface-card border-brand-teal/40 shadow-lg shadow-brand-purple/5'
                     : 'bg-surface-card border-[var(--border-default)] hover:border-brand-teal/30'
@@ -767,14 +771,14 @@ function FaqSection() {
                 <button
                   type="button"
                   onClick={() => setOpenIndex(isOpen ? null : i)}
-                  className="w-full text-right p-5 md:p-6 flex items-center justify-between gap-4 cursor-pointer"
+                  className="w-full text-right p-4 md:p-5 flex items-center justify-between gap-4 cursor-pointer"
                   aria-expanded={isOpen}
                 >
-                  <span className="font-display font-bold text-brand-text text-sm md:text-base flex-1">
+                  <span className="font-display font-bold text-brand-text text-sm flex-1">
                     {item.q}
                   </span>
                   <span
-                    className={`w-8 h-8 rounded-full bg-brand-teal/10 border border-brand-teal/25 flex items-center justify-center text-brand-teal text-lg font-bold shrink-0 transition-transform duration-300 ${
+                    className={`w-7 h-7 rounded-full bg-brand-teal/10 border border-brand-teal/25 flex items-center justify-center text-brand-teal text-lg font-bold shrink-0 transition-transform duration-300 ${
                       isOpen ? 'rotate-45' : ''
                     }`}
                     aria-hidden="true"
@@ -787,7 +791,7 @@ function FaqSection() {
                   style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
                 >
                   <div className="overflow-hidden">
-                    <p className="px-5 md:px-6 pb-5 md:pb-6 text-sm md:text-base text-brand-text-muted leading-relaxed border-t border-[var(--border-subtle)] pt-4">
+                    <p className="px-4 md:px-5 pb-4 md:pb-5 text-sm text-brand-text-muted leading-relaxed border-t border-[var(--border-subtle)] pt-3">
                       {item.a}
                     </p>
                   </div>
@@ -815,52 +819,55 @@ function WorkingHours() {
   }, [dayIndex, hour]);
 
   return (
-    <section className="py-12 md:py-20 lg:py-24 px-4 md:px-12 bg-surface-secondary relative overflow-hidden section-vignette">
+    <section className="py-8 md:py-12 px-4 md:px-12 bg-surface-secondary relative overflow-hidden section-vignette">
       <div className="absolute -top-20 -left-20 w-[500px] h-[500px] bg-brand-teal/10 rounded-full blur-[130px] animate-blob-1 pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-[400px] h-[400px] bg-brand-purple/8 rounded-full blur-[120px] animate-blob-3 pointer-events-none" />
       <SoundWaveBars color="purple" size="sm" className="absolute top-8 right-8 opacity-[0.18] animate-float hidden md:flex" />
       <SoundWaveBars color="teal" size="sm" className="absolute bottom-8 left-8 opacity-[0.2] animate-float-reverse hidden md:flex" />
 
-      <div className="relative z-[2] max-w-md mx-auto text-center">
-        <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-3 block">ساعات العمل</span>
-        <h3 className="font-display font-bold text-2xl md:text-3xl text-brand-text mb-4">
-          {content.contact.hours.title}
-        </h3>
+      <div className="relative z-[2] max-w-[560px] mx-auto">
+        <div className="text-center mb-4">
+          <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-2 block">ساعات العمل</span>
+          <h3 className="font-display font-bold text-xl md:text-2xl text-brand-text mb-3 inline-block">
+            {content.contact.hours.title}
+          </h3>
 
-        {/* Live open/closed badge */}
-        <div
-          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium mb-8 border ${
-            isOpen
-              ? 'bg-green-500/10 border-green-500/30 text-green-600 dark:text-green-400'
-              : 'bg-red-500/10 border-red-500/30 text-red-600 dark:text-red-400'
-          }`}
-        >
-          <span className="relative flex h-2 w-2">
-            <span
-              className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                isOpen ? 'bg-green-500' : 'bg-red-500'
-              }`}
-            />
-            <span
-              className={`relative inline-flex rounded-full h-2 w-2 ${
-                isOpen ? 'bg-green-500' : 'bg-red-500'
-              }`}
-            />
-          </span>
-          {isOpen ? 'مفتوح الآن' : 'مغلق حالياً'}
+          {/* Live open/closed badge — on the same line as the title on desktop */}
+          <div
+            className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-medium ms-3 border ${
+              isOpen
+                ? 'bg-green-500/10 border-green-500/30 text-green-600 dark:text-green-400'
+                : 'bg-red-500/10 border-red-500/30 text-red-600 dark:text-red-400'
+            }`}
+          >
+            <span className="relative flex h-1.5 w-1.5">
+              <span
+                className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                  isOpen ? 'bg-green-500' : 'bg-red-500'
+                }`}
+              />
+              <span
+                className={`relative inline-flex rounded-full h-1.5 w-1.5 ${
+                  isOpen ? 'bg-green-500' : 'bg-red-500'
+                }`}
+              />
+            </span>
+            {isOpen ? 'مفتوح الآن' : 'مغلق حالياً'}
+          </div>
         </div>
 
-        <div className="space-y-3">
+        {/* Days — side by side on md+ instead of stacked */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           {content.contact.hours.days.map((d, i) => (
             <div
               key={i}
-              className={`flex justify-between items-center min-h-[48px] py-3 px-5 rounded-xl transition-colors duration-200 border ${
+              className={`flex sm:flex-col items-center sm:items-center justify-between sm:justify-center gap-1 py-2.5 px-4 rounded-xl transition-colors duration-200 border ${
                 d.hours === 'مغلق'
                   ? 'bg-red-50/50 dark:bg-red-900/10 text-red-500 border-red-200/40 dark:border-red-800/30'
                   : 'bg-surface-card text-brand-text border-[var(--border-subtle)] hover:border-brand-teal/40 hover:bg-brand-teal/5'
               }`}
             >
-              <span className="font-medium text-sm">{d.day}</span>
+              <span className="font-medium text-xs sm:text-[11px] sm:tracking-wider sm:uppercase opacity-70">{d.day}</span>
               <span className="text-sm font-display font-bold">{d.hours}</span>
             </div>
           ))}
@@ -870,43 +877,194 @@ function WorkingHours() {
   );
 }
 
-/* ─────────────────── BOTTOM CTA ─────────────────── */
+/* ─────────────────── REGISTRATION / APPLICATION ─────────────────── */
 
-function ContactBottomCTA() {
+const REG_REQUIREMENTS = [
+  {
+    number: '٠١',
+    title: 'الأوراق المطلوبة',
+    desc: 'نسخة من شهادة ميلاد الطفل، أي تقارير طبية سابقة، وتقارير مدرسية إن وُجدت.',
+  },
+  {
+    number: '٠٢',
+    title: 'الفئة العمرية',
+    desc: 'نستقبل الأطفال من عمر سنتين فما فوق، مع برامج متخصصة لكل مرحلة عمرية.',
+  },
+  {
+    number: '٠٣',
+    title: 'جلسة التقييم الأولى',
+    desc: 'جلسة شاملة مدتها ٤٥–٦٠ دقيقة مع فريق متعدد التخصصات لتحديد خطة علاج مخصصة.',
+  },
+  {
+    number: '٠٤',
+    title: 'حجز الموعد',
+    desc: 'عبر الهاتف، الواتساب، أو نموذج التواصل أعلاه — ونعاود الاتصال بك خلال ٢٤ ساعة.',
+  },
+];
+
+function RegistrationSection() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '.reg-card',
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: ref.current, start: 'top 85%', toggleActions: 'play none none none' },
+        }
+      );
+    }, ref);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="py-20 md:py-28 px-4 md:px-12 bg-surface-primary relative overflow-hidden section-vignette">
-      <div className="absolute -top-20 -right-20 w-[600px] h-[600px] bg-brand-teal/12 rounded-full blur-[140px] animate-blob-2 pointer-events-none" />
-      <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-brand-purple/10 rounded-full blur-[130px] animate-blob-4 pointer-events-none" />
-      <SoundWaveBars color="teal" size="lg" className="absolute top-16 left-12 opacity-[0.22] animate-float hidden md:flex" />
-      <SoundWaveBars color="purple" size="md" className="absolute bottom-16 right-12 opacity-[0.2] animate-float-reverse hidden md:flex" />
-      <SwooshCurve color="teal" width={400} className="absolute top-24 right-20 opacity-[0.15] hidden lg:block" />
+    <section className="py-8 md:py-12 px-4 md:px-12 bg-surface-primary relative overflow-hidden section-vignette">
+      <div className="absolute -top-20 -right-20 w-[600px] h-[600px] bg-brand-teal/10 rounded-full blur-[140px] animate-blob-2 pointer-events-none" />
+      <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-brand-purple/8 rounded-full blur-[130px] animate-blob-4 pointer-events-none" />
+      <SoundWaveBars color="purple" size="md" className="absolute top-12 left-8 md:top-16 md:left-16 opacity-[0.2] animate-float hidden md:flex" />
+      <SoundWaveBars color="teal" size="sm" className="absolute bottom-10 right-8 md:bottom-16 md:right-16 opacity-[0.18] animate-float-reverse hidden md:flex" />
+      <SwooshCurve color="teal" width={300} className="absolute top-20 left-20 opacity-[0.12] hidden lg:block" />
 
-      <div className="relative z-[2] max-w-[720px] mx-auto text-center">
-        <span className="inline-block text-xs text-brand-teal tracking-[0.2em] font-medium mb-4">خطوتك الأولى</span>
-        <h2 className="font-display font-bold text-2xl md:text-4xl lg:text-5xl text-brand-text mb-5 leading-tight">
-          كل رحلة تبدأ بخطوة.
-          <br />
-          <span className="text-brand-teal">ابدأ رحلة طفلك اليوم.</span>
-        </h2>
-        <p className="text-brand-text-muted text-base md:text-lg mb-10 leading-relaxed max-w-xl mx-auto">
-          لست متأكداً من أين تبدأ؟ احجز استشارة مجانية لمدة ١٥ دقيقة مع أحد أخصائيينا.
-        </p>
-        <div className="flex gap-4 justify-center flex-wrap">
-          <Button
-            href={content.contact.info.whatsapp}
-            size="lg"
-          >
-            احجز استشارة مجانية
-          </Button>
-          <Button
-            href={`tel:${content.contact.info.phone.replace(/\s+/g, '')}`}
-            variant="secondary"
-            size="lg"
-          >
-            اتصل الآن
+      <div ref={ref} className="relative z-[2] max-w-[1000px] mx-auto">
+        <div className="text-center mb-6">
+          <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-2 block">التسجيل والتقديم</span>
+          <h2 className="font-display font-bold text-xl md:text-3xl text-brand-text mb-2 leading-tight">
+            كيف تسجل طفلك معنا
+          </h2>
+          <p className="text-brand-text-muted max-w-lg mx-auto text-sm">
+            أربع خطوات بسيطة للبدء — شفافة وواضحة من البداية.
+          </p>
+          <div className="w-10 h-[2px] bg-brand-teal mx-auto mt-4" />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-6">
+          {REG_REQUIREMENTS.map((step, i) => (
+            <div
+              key={i}
+              className="reg-card bg-surface-card rounded-xl p-4 md:p-5 border border-[var(--border-default)] hover:border-brand-teal hover:shadow-lg transition-all duration-300"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-lg bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center text-brand-teal font-display font-bold text-xs shrink-0">
+                  {step.number}
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-display font-bold text-brand-text text-sm md:text-base mb-1">
+                    {step.title}
+                  </h3>
+                  <p className="text-xs md:text-sm text-brand-text-muted leading-relaxed">
+                    {step.desc}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center">
+          <Button href={content.contact.info.whatsapp} size="md">
+            احجز موعد التقييم الآن
           </Button>
         </div>
       </div>
     </section>
   );
 }
+
+/* ─────────────────── EMPLOYMENT ─────────────────── */
+
+const EMPLOYMENT_PERKS = [
+  {
+    title: 'بيئة عمل داعمة',
+    desc: 'فريق متعدد التخصصات يعمل بروح التعاون وشغف حقيقي تجاه الأطفال.',
+  },
+  {
+    title: 'تدريب وتطوير مستمر',
+    desc: 'برامج تدريبية داخلية وورش عمل دورية لرفع كفاءة الأخصائيين.',
+  },
+  {
+    title: 'فرص نمو مهني',
+    desc: 'مسار وظيفي واضح وفرصة للتخصص في مجالات علاج النطق والسلوك والتعلم.',
+  },
+];
+
+function EmploymentSection() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '.emp-item',
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: ref.current, start: 'top 85%', toggleActions: 'play none none none' },
+        }
+      );
+    }, ref);
+    return () => ctx.revert();
+  }, []);
+
+  const careersMailto = `mailto:${content.contact.info.email}?subject=${encodeURIComponent('طلب توظيف — إمكان المستقبل')}`;
+
+  return (
+    <section className="py-8 md:py-12 px-4 md:px-12 bg-surface-secondary relative overflow-hidden section-vignette">
+      <div className="absolute -top-20 -left-20 w-[500px] h-[500px] bg-brand-teal/10 rounded-full blur-[130px] animate-blob-1 pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-[500px] h-[500px] bg-brand-purple/8 rounded-full blur-[120px] animate-blob-3 pointer-events-none" />
+      <SoundWaveBars color="teal" size="md" className="absolute top-10 right-8 md:top-16 md:right-16 opacity-[0.2] animate-float hidden md:flex" />
+      <SoundWaveBars color="purple" size="sm" className="absolute bottom-12 left-8 md:bottom-16 md:left-16 opacity-[0.18] animate-float-reverse hidden md:flex" />
+      <SwooshCurve color="purple" width={280} className="absolute bottom-20 right-20 opacity-[0.12] rotate-180 hidden lg:block" />
+
+      <div ref={ref} className="relative z-[2] max-w-[1000px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-[0.9fr_1.1fr] gap-6 md:gap-10 items-center">
+          <div className="emp-item">
+            <span className="inline-block text-xs text-brand-teal tracking-[0.2em] font-medium mb-2">
+              للتوظيف
+            </span>
+            <h2 className="font-display font-bold text-xl md:text-3xl text-brand-text mb-3 leading-tight">
+              انضم إلى فريقنا
+            </h2>
+            <p className="text-brand-text-muted leading-relaxed mb-4 text-sm">
+              نبحث باستمرار عن أخصائيين متميزين في مجالات النطق والتخاطب، تعديل السلوك،
+              التأهيل السمعي، والتدخل المبكر — ليكونوا جزءاً من رحلة تطوير حقيقية لكل طفل.
+            </p>
+            <Button href={careersMailto} size="md">
+              أرسل سيرتك الذاتية
+            </Button>
+          </div>
+
+          <div className="space-y-2">
+            {EMPLOYMENT_PERKS.map((perk, i) => (
+              <div
+                key={i}
+                className="emp-item flex items-start gap-3 bg-surface-card rounded-xl p-4 md:p-5 border border-[var(--border-default)] hover:border-brand-teal/40 transition-all duration-300"
+              >
+                <span className="w-2 h-2 rounded-full bg-brand-teal shrink-0 mt-2" />
+                <div>
+                  <h4 className="font-display font-bold text-brand-text text-sm mb-0.5">
+                    {perk.title}
+                  </h4>
+                  <p className="text-xs text-brand-text-muted leading-relaxed">
+                    {perk.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
