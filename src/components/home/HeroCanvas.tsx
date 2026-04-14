@@ -171,71 +171,76 @@ export default function HeroCanvas() {
   return (
     <section
       ref={sectionRef}
-      className="h-[48vh] md:h-[180vh] lg:h-[220vh] relative overflow-x-clip bg-[#1E1535]"
+      className="h-auto md:h-[180vh] lg:h-[220vh] relative overflow-x-clip bg-[#1E1535]"
     >
       <div
-        className="static md:sticky md:top-0 h-[48vh] md:h-screen w-full overflow-hidden bg-[#1E1535]"
+        className="static md:sticky md:top-0 h-auto md:h-screen w-full overflow-hidden bg-[#1E1535] flex flex-col"
       >
-        {/* ─── The canvas ─────────────────────────────── */}
-        <canvas
-          ref={canvasRef}
-          className={`absolute inset-0 w-full h-full transition-opacity duration-700 ${
-            firstFrameLoaded ? 'opacity-100' : 'opacity-0'
-          }`}
-        />
-
+        {/* ─── Top pill row ───────────────────────────── */}
         <div
-          className={`absolute top-6 md:top-10 left-1/2 -translate-x-1/2 z-10 transition-all duration-700 ${
+          className={`shrink-0 pt-6 md:pt-10 flex justify-center transition-all duration-700 ${
             firstFrameLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
           }`}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.06] md:bg-brand-purple/10 backdrop-blur-md border border-white/10 md:border-brand-purple/20">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.06] backdrop-blur-md border border-white/10">
             <span className="relative flex h-1.5 w-1.5">
               <span className="absolute inline-flex h-full w-full rounded-full bg-brand-teal opacity-60 animate-ping" />
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-teal" />
             </span>
-            <span className="text-[11px] md:text-xs font-medium text-white md:text-brand-purple tracking-normal md:tracking-[0.25em] uppercase">
+            <span className="text-[11px] md:text-xs font-medium text-white tracking-normal md:tracking-[0.2em] uppercase">
               رحلة إمكان
             </span>
           </div>
         </div>
 
-        {/* ─── Chapter number pills on the right (RTL) ─── */}
-        <div className="absolute top-1/2 right-4 md:right-8 -translate-y-1/2 z-10 hidden sm:flex flex-col gap-3 pointer-events-none">
-          {CHAPTERS.map((c, i) => {
-            const isActive = i === activeChapter;
-            return (
-              <div
-                key={i}
-                className={`flex items-center gap-2 justify-end transition-all duration-500 ${
-                  isActive ? 'opacity-100' : 'opacity-35'
-                }`}
-              >
-                <span
-                  className={`text-[10px] font-display tabular-nums tracking-wider transition-colors duration-500 ${
-                    isActive ? 'text-white' : 'text-white/40'
+        {/* ─── Canvas region — holds canvas + side indicators. Locked to the
+             frame aspect ratio on mobile so there's no dead padding around
+             the image; flex-1 on desktop to fill the sticky container. ─── */}
+        <div className="relative aspect-[1280/714] md:aspect-auto md:flex-1 md:min-h-0 mt-4 md:mt-0">
+          <canvas
+            ref={canvasRef}
+            className={`absolute inset-0 w-full h-full transition-opacity duration-700 ${
+              firstFrameLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+
+          {/* Chapter number pills on the right (RTL) */}
+          <div className="absolute top-1/2 right-4 md:right-8 -translate-y-1/2 z-10 hidden sm:flex flex-col gap-3 pointer-events-none">
+            {CHAPTERS.map((c, i) => {
+              const isActive = i === activeChapter;
+              return (
+                <div
+                  key={i}
+                  className={`flex items-center gap-2 justify-end transition-all duration-500 ${
+                    isActive ? 'opacity-100' : 'opacity-35'
                   }`}
                 >
-                  {c.number}
-                </span>
-                <span
-                  className={`block rounded-full transition-all duration-500 ${
-                    isActive
-                      ? 'w-1.5 h-6 bg-brand-teal'
-                      : 'w-1.5 h-1.5 bg-white/30'
-                  }`}
-                />
-              </div>
-            );
-          })}
+                  <span
+                    className={`text-[10px] font-display tabular-nums tracking-wider transition-colors duration-500 ${
+                      isActive ? 'text-brand-purple' : 'text-brand-purple/40'
+                    }`}
+                  >
+                    {c.number}
+                  </span>
+                  <span
+                    className={`block rounded-full transition-all duration-500 ${
+                      isActive
+                        ? 'w-1.5 h-6 bg-brand-teal'
+                        : 'w-1.5 h-1.5 bg-brand-purple/25'
+                    }`}
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        {/* ─── Chapter text overlay ────── */}
-        <div className="absolute bottom-8 md:bottom-16 left-0 right-0 z-10 px-6 md:px-12 pointer-events-none">
+        {/* ─── Bottom text row — chapter block + progress bar + scroll hint ─── */}
+        <div className="shrink-0 px-6 md:px-12 pt-3 md:pt-5 pb-5 md:pb-8 relative">
           <div className="max-w-[720px] mx-auto text-center">
             {/* Key forces remount on chapter change for a clean fade/slide */}
             <div key={activeChapter} className="animate-fade-slide-up">
-              <div className="flex items-center justify-center gap-3 mb-3">
+              <div className="flex items-center justify-center gap-3 mb-2 md:mb-3">
                 <span className="block w-6 h-[1px] bg-brand-teal/60" />
                 <span className="text-[10px] md:text-xs font-medium text-brand-teal tracking-[0.3em] uppercase">
                   {current.label}
@@ -243,20 +248,18 @@ export default function HeroCanvas() {
                 <span className="block w-6 h-[1px] bg-brand-teal/60" />
               </div>
 
-              <h2 className="font-display font-bold text-2xl sm:text-3xl md:text-5xl text-white md:text-brand-purple mb-2 md:mb-3 leading-tight">
+              <h2 className="font-display font-bold text-xl sm:text-2xl md:text-4xl text-white mb-1.5 md:mb-3 leading-tight">
                 {current.title}
               </h2>
 
-              <p className="text-[13px] sm:text-sm md:text-base text-white/70 md:text-brand-purple/75 leading-relaxed max-w-md mx-auto">
+              <p className="text-[12px] sm:text-sm md:text-base text-white/70 leading-relaxed max-w-md mx-auto">
                 {current.subtitle}
               </p>
             </div>
           </div>
-        </div>
 
-        {/* ─── Progress bar at the very bottom ────────── */}
-        <div className="absolute bottom-2 md:bottom-6 left-0 right-0 z-10 pointer-events-none">
-          <div className="max-w-[720px] mx-auto px-6 md:px-12">
+          {/* Progress bar */}
+          <div className="max-w-[720px] mx-auto mt-4 md:mt-6">
             <div className="flex items-center gap-3">
               <span className="text-[10px] font-display tabular-nums text-white/50">
                 {String(activeChapter + 1).padStart(2, '0')}
@@ -272,18 +275,18 @@ export default function HeroCanvas() {
               </span>
             </div>
           </div>
-        </div>
 
-        {/* ─── Scroll hint — fades out once the reveal starts ─── */}
-        <div
-          className={`absolute bottom-2 left-1/2 -translate-x-1/2 z-10 pointer-events-none hidden md:flex flex-col items-center gap-1 transition-all duration-500 ${
-            revealStarted ? 'opacity-0 translate-y-2' : 'opacity-60 translate-y-0'
-          }`}
-        >
-          <span className="text-[9px] text-white/60 tracking-[0.25em] uppercase">
-            مرّر
-          </span>
-          <span className="block w-[1px] h-4 bg-white/30 animate-breathe origin-top" />
+          {/* Scroll hint — desktop only, fades out when reveal starts */}
+          <div
+            className={`absolute bottom-1 left-1/2 -translate-x-1/2 pointer-events-none hidden md:flex flex-col items-center gap-1 transition-all duration-500 ${
+              revealStarted ? 'opacity-0 translate-y-2' : 'opacity-60 translate-y-0'
+            }`}
+          >
+            <span className="text-[9px] text-white/60 tracking-[0.25em] uppercase">
+              مرّر
+            </span>
+            <span className="block w-[1px] h-4 bg-white/30 animate-breathe origin-top" />
+          </div>
         </div>
 
         {/* ─── Premium loader (pre-first-frame only) ─────── */}

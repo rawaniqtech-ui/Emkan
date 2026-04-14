@@ -65,8 +65,11 @@ export default function HeroCards3D() {
     const cardEls = cardsRef.current.children;
     const cardCount = CARDS.length;
     const angleStep = 360 / cardCount;
-    const isMobile = window.innerWidth < 640;
-    const radius = isMobile ? 180 : window.innerWidth < 1024 ? 280 : 320;
+    const w = window.innerWidth;
+    const isMobile = w < 640;
+    // Radius just slightly above card width at each breakpoint — cards stay
+    // close together without colliding. Card widths: 200 / 260 / 300 / 320.
+    const radius = isMobile ? 210 : w < 768 ? 272 : w < 1024 ? 315 : 335;
 
     Array.from(cardEls).forEach((card, i) => {
       const el = card as HTMLElement;

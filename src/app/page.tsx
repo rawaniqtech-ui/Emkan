@@ -42,10 +42,12 @@ export default function Home() {
         <HeroCanvas />
       </div>
 
-      {/* 2. Moving services strip */}
-      <section className="py-6 md:py-8 bg-surface-primary overflow-hidden">
-        <div className="flex animate-marquee hover:[animation-play-state:paused]" style={{ animationDuration: '40s' }}>
-          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+      {/* 2. Moving services strip — forced LTR so translateX(-50%) works
+           against the content width (w-max), not the viewport. Two copies
+           of the items give an exact halfway-point for a seamless loop. */}
+      <section className="py-6 md:py-8 bg-surface-primary overflow-hidden" dir="ltr">
+        <div className="flex w-max animate-marquee hover:[animation-play-state:paused]" style={{ animationDuration: '40s' }}>
+          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
             <span
               key={i}
               className="inline-flex items-center gap-2 px-5 py-2 mx-2 rounded-full bg-white dark:bg-surface-card border border-[var(--border-default)] text-[13px] md:text-sm font-medium text-brand-text whitespace-nowrap shrink-0"

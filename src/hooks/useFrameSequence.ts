@@ -231,20 +231,25 @@ export function useFrameSequence(
       requestAnimationFrame(() => {
         if (!section) { ticking = false; return; }
         const rect = section.getBoundingClientRect();
-        const canvasEl = canvasRef.current;
-        const pinHeight = canvasEl?.parentElement?.clientHeight ?? window.innerHeight;
+        // Sticky pin range is bounded by the sticky container height, which
+        // is the viewport on desktop (h-screen). The canvas element itself is
+        // a flex-1 slice of that container — its height must not be used for
+        // scroll math because it'd make progress drift by ~15% before the
+        // sticky actually releases.
+        const pinHeight = window.innerHeight;
         const scrollableHeight = section.offsetHeight - pinHeight;
 
         let progress: number;
         if (scrollableHeight > 50) {
-          // Sticky mode: section meaningfully taller than pin (desktop). Frames
-          // map to the pinned scroll range — progress 0 at rect.top=0, 1 when
-          // sticky releases.
+          // Sticky mode: section meaningfully taller than the viewport
+          // (desktop). Frames map to the pinned scroll range — progress 0 at
+          // rect.top=0, 1 when sticky releases.
           progress = Math.min(1, Math.max(0, -rect.top / scrollableHeight));
         } else {
-          // Travel mode: section is compact (mobile). Frames advance while the
-          // section travels through the viewport, so the animation spans the
-          // natural scroll-through without a pinned dead zone.
+          // Travel mode: section is compact (mobile section ≤ viewport).
+          // Frames advance while the section travels through the viewport,
+          // so the animation spans the natural scroll-through without a
+          // pinned dead zone.
           const viewportH = window.innerHeight;
           const totalTravel = viewportH + section.offsetHeight;
           const scrolled = viewportH - rect.top;
