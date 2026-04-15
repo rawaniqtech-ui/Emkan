@@ -70,7 +70,7 @@ function StatItem({ number, suffix, label, isActive, delay, index }: {
           </span>
         </div>
       </div>
-      <span className="text-[11px] sm:text-xs text-brand-text-muted tracking-wider block leading-tight">{label}</span>
+      <span className="text-[11px] sm:text-xs text-brand-text-muted block leading-tight">{label}</span>
 
       {/* Subtle hover glow */}
       <div className="absolute inset-0 bg-brand-teal/0 group-hover:bg-brand-teal/[0.03] rounded-2xl transition-colors duration-500" />
@@ -94,7 +94,7 @@ export default function StatsCounter() {
 
       <div className="relative z-[2] max-w-[1000px] mx-auto px-4 sm:px-6">
         <div className="text-center mb-8 sm:mb-14">
-          <span className="text-xs text-brand-teal tracking-[0.2em] font-medium block mb-3">
+          <span className="text-xs text-brand-teal font-medium block mb-3">
             {content.home.stats.sectionLabel}
           </span>
           <h2 className="font-display font-bold text-2xl md:text-3xl text-brand-text">

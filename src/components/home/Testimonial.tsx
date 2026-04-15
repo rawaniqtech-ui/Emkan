@@ -83,7 +83,7 @@ export default function Testimonial() {
       <SoundWaveBars color="teal" size="sm" className="absolute bottom-12 left-8 opacity-[0.18] animate-float-reverse hidden md:flex" />
 
       <div className="testimonial-section max-w-[750px] mx-auto text-center relative z-[2]">
-        <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-6 sm:mb-10 block">
+        <span className="text-xs text-brand-teal font-medium mb-6 sm:mb-10 block">
           ماذا يقول الأهل
         </span>
 

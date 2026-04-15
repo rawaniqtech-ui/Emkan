@@ -60,15 +60,17 @@ export default function HorizontalServices() {
   }, []);
 
   return (
-    <section className="py-12 md:py-20 lg:py-28 px-4 md:px-12 bg-surface-secondary relative overflow-hidden">
-      {/* Background glows */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] md:w-[800px] h-[300px] md:h-[600px] bg-brand-teal/[0.05] rounded-full blur-[200px]" />
-      <div className="absolute bottom-0 right-0 w-[200px] md:w-[400px] h-[200px] md:h-[400px] bg-brand-purple/[0.03] rounded-full blur-[150px]" />
+    <section className="py-12 md:py-20 lg:py-28 px-4 md:px-12 bg-surface-secondary relative overflow-hidden [content-visibility:auto] [contain-intrinsic-size:0_1200px]">
+      {/* Background glows — blur radii reduced from 200px/150px so the GPU
+          doesn't repaint a huge Gaussian every scroll frame. Opacity nudged
+          up slightly so the visual glow intensity stays identical. */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] md:w-[800px] h-[300px] md:h-[600px] bg-brand-teal/[0.07] rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[200px] md:w-[400px] h-[200px] md:h-[400px] bg-brand-purple/[0.05] rounded-full blur-[60px] pointer-events-none" />
 
       <div className="relative z-[2] max-w-[1100px] mx-auto">
         {/* Header */}
         <div className="text-center mb-8 md:mb-14">
-          <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-3 block">خدماتنا</span>
+          <span className="text-xs text-brand-teal font-medium mb-3 block">خدماتنا</span>
           <h2 className="font-display font-bold text-2xl sm:text-3xl md:text-5xl text-brand-text mb-3 sm:mb-4 leading-tight">
             خدمات متخصصة <span className="text-brand-teal">لطفلك</span>
           </h2>
@@ -82,7 +84,7 @@ export default function HorizontalServices() {
           {SERVICES.map((service, i) => (
             <TiltCard key={i} intensity={4} className="h-full">
               <div
-                className="service-card bg-surface-card border border-[var(--border-default)] hover:border-brand-teal rounded-2xl p-5 sm:p-7 md:p-9 transition-all duration-500 hover:bg-surface-secondary group relative overflow-hidden h-full"
+                className="service-card bg-surface-card border border-[var(--border-default)] hover:border-brand-teal rounded-2xl p-5 sm:p-7 md:p-9 transition-colors duration-500 hover:bg-surface-secondary group relative overflow-hidden h-full"
               >
                 {/* Big background number */}
                 <span className="absolute -top-3 -left-1 text-[100px] md:text-[120px] font-display font-bold text-brand-text/[0.04] leading-none pointer-events-none select-none">
@@ -90,11 +92,11 @@ export default function HorizontalServices() {
                 </span>
 
                 <div className="relative">
-                  <div className="w-14 h-14 rounded-2xl bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center mb-6 text-brand-teal group-hover:scale-110 group-hover:bg-brand-teal/20 transition-all duration-500">
+                  <div className="w-14 h-14 rounded-2xl bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center mb-6 text-brand-teal group-hover:scale-110 group-hover:bg-brand-teal/20 transition-[transform,background-color] duration-500">
                     <service.Icon size={32} />
                   </div>
 
-                  <span className="text-xs text-brand-teal font-bold tracking-[0.15em] mb-3 block">
+                  <span className="text-xs text-brand-teal font-bold mb-3 block">
                     الخدمة {service.number}
                   </span>
 

@@ -151,7 +151,7 @@ export default function JourneySection() {
 
                   <div className={`flex-1 ${isEven ? 'md:text-left' : 'md:text-right'}`}>
                     <div className="bg-white dark:bg-surface-card rounded-2xl p-4 sm:p-6 md:p-8 border border-[var(--border-subtle)] hover:border-[var(--border-hover)] transition-all duration-500 hover:-translate-y-1 group">
-                      <span className="text-[11px] sm:text-xs text-brand-teal-dark font-bold tracking-wider block mb-2 sm:mb-3">
+                      <span className="text-[11px] sm:text-xs text-brand-teal-dark font-bold block mb-2 sm:mb-3">
                         الخطوة {step.number}
                       </span>
                       <h3 className="font-display font-bold text-base sm:text-lg md:text-xl text-brand-text mb-2 sm:mb-3">

@@ -50,7 +50,7 @@ export default function ScrollMarquee({
           <span
             key={i}
             dir="rtl"
-            className="font-display font-bold tracking-tight shrink-0 leading-[0.95] px-8 md:px-14 select-none"
+            className="font-display font-bold shrink-0 leading-[0.95] px-8 md:px-14 select-none"
             style={{
               fontSize: 'clamp(72px, 14vw, 200px)',
               color: 'var(--brand-text)',

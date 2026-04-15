@@ -67,7 +67,7 @@ export default function AboutPreview() {
       <div ref={sectionRef} className="relative z-[2] max-w-[1100px] mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-[1.15fr_0.85fr] gap-6 sm:gap-10 md:gap-16 items-center">
           <div>
-            <span className="about-text inline-block text-xs text-brand-teal tracking-[0.2em] font-medium mb-4">
+            <span className="about-text inline-block text-xs text-brand-teal font-medium mb-4">
               {content.home.aboutPreview.sectionLabel}
             </span>
             <h2 className="about-text font-display font-bold text-2xl sm:text-3xl md:text-4xl text-brand-text mb-4 sm:mb-6 leading-tight">

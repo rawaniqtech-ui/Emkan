@@ -100,7 +100,7 @@ export default function HeroSection() {
         <div className="hero-line w-10 sm:w-12 h-[2px] bg-brand-teal mx-auto mb-5 sm:mb-10 opacity-60" />
 
         {/* Badge */}
-        <span className="hero-badge inline-block text-[11px] sm:text-xs tracking-[0.15em] text-brand-text-muted font-medium mb-4 sm:mb-8 px-2">
+        <span className="hero-badge inline-block text-[11px] sm:text-xs text-brand-text-muted font-medium mb-4 sm:mb-8 px-2">
           {content.home.hero.badge}
         </span>
 
@@ -160,7 +160,7 @@ export default function HeroSection() {
 
         {/* Scroll hint */}
         <div className="hero-scroll flex flex-col items-center gap-3">
-          <span className="text-xs tracking-[0.2em] text-brand-text-muted">
+          <span className="text-xs text-brand-text-muted">
             {content.home.hero.scrollHint}
           </span>
           <div className="w-[1px] h-9 bg-brand-teal animate-breathe origin-top" />

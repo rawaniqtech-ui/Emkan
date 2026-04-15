@@ -7,7 +7,7 @@ import Image from 'next/image';
 export default function PageLoader() {
   // Skip the loader entirely on mobile — it's been causing visual artifacts
   // (sticky purple bar on the left edge after the wipe-up clipPath transition).
-  // Mobile users don't need the cinematic intro; the brand-reveal canvas IS the intro.
+  // Mobile users don't need the cinematic intro; the brand-reveal section IS the intro.
   // Initial state must match SSR (true) to avoid hydration mismatch — we hide
   // synchronously in useEffect before any paint.
   const [visible, setVisible] = useState(true);
@@ -253,7 +253,7 @@ export default function PageLoader() {
         </div>
 
         {/* Arabic brand name */}
-        <h1 className="loader-brand font-display font-bold text-[26px] md:text-5xl text-white mb-2 tracking-tight leading-none">
+        <h1 className="loader-brand font-display font-bold text-[26px] md:text-5xl text-white mb-2 leading-none">
           إمكان المستقبل
         </h1>
 
@@ -294,7 +294,7 @@ export default function PageLoader() {
             />
           </div>
           <div className="flex items-center justify-center gap-3 mt-3">
-            <span className="text-white/45 text-[11px] tracking-[0.2em]">جاري التحميل</span>
+            <span className="text-white/45 text-[11px]">جاري التحميل</span>
             <span className="text-brand-teal text-[11px] font-display font-bold tabular-nums">
               {String(progress).padStart(3, '0')}%
             </span>

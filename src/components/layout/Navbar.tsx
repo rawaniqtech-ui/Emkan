@@ -33,7 +33,11 @@ export default function Navbar() {
 
   useEffect(() => {
     setMobileOpen(false);
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    // Don't stomp on hash-anchor scrolling — LenisProvider handles the case
+    // where the URL has a hash and needs to scroll to a specific section.
+    if (!window.location.hash) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
   }, [pathname]);
 
   useEffect(() => {
@@ -58,15 +62,15 @@ export default function Navbar() {
         )}
 
         <div className="max-w-[1200px] mx-auto px-4 md:px-12">
-          <div className="flex justify-between items-center h-16 md:h-20">
-            {/* Logo */}
+          <div className="relative flex justify-between items-center h-16 md:h-20">
+            {/* Logo — anchored to the right in RTL */}
             <Link href="/" className="flex items-center gap-2 md:gap-3 group min-w-0" aria-label="الصفحة الرئيسية">
               <Image
                 src="/images/logo-icon.jpg"
                 alt="شعار إمكان المستقبل"
                 width={36}
                 height={36}
-                className={`rounded-lg transition-all duration-500 group-hover:scale-95 shrink-0 md:w-10 md:h-10 ${
+                className={`rounded-lg transition-all duration-500 group-hover:scale-95 shrink-0 w-9 h-9 md:w-10 md:h-10 ${
                   scrolled ? 'scale-90' : ''
                 }`}
                 priority
@@ -81,26 +85,74 @@ export default function Navbar() {
               </div>
             </Link>
 
-            {/* Desktop Nav */}
-            <div className="hidden md:flex items-center gap-8">
-              {NAV_ITEMS.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`relative text-sm font-body transition-colors duration-300 py-2 ${
-                    pathname === item.href
-                      ? 'text-brand-text dark:text-brand-teal font-medium'
-                      : 'text-brand-text-muted dark:text-white/60 hover:text-brand-text dark:hover:text-brand-teal'
-                  }`}
-                >
-                  {item.label}
-                  {/* Animated dot indicator instead of underline */}
-                  {pathname === item.href && (
-                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-brand-teal transition-all duration-300" />
-                  )}
-                </Link>
-              ))}
+            {/* Desktop Nav items — absolutely centered in the navbar so the
+                links sit exactly in the middle regardless of the logo/CTA
+                widths on either side. */}
+            <div className="hidden md:flex items-center gap-6 lg:gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              {NAV_ITEMS.map((item) => {
+                const isActive = pathname === item.href;
+                const linkClass = `relative text-sm font-body transition-colors duration-300 py-2 ${
+                  isActive
+                    ? 'text-brand-text dark:text-brand-teal font-medium'
+                    : 'text-brand-text-muted dark:text-white/60 hover:text-brand-text dark:hover:text-brand-teal'
+                }`;
 
+                if (!item.children) {
+                  return (
+                    <Link key={item.href} href={item.href} className={linkClass}>
+                      {item.label}
+                      {isActive && (
+                        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-brand-teal transition-all duration-300" />
+                      )}
+                    </Link>
+                  );
+                }
+
+                return (
+                  <div key={item.href} className="relative group">
+                    <Link href={item.href} className={`${linkClass} flex items-center gap-1.5`}>
+                      {item.label}
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="transition-transform duration-300 group-hover:rotate-180"
+                        aria-hidden="true"
+                      >
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                      {isActive && (
+                        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-brand-teal transition-all duration-300" />
+                      )}
+                    </Link>
+
+                    {/* Dropdown — pt-3 gives a transparent hover buffer between
+                        parent and card so the cursor can cross without losing hover. */}
+                    <div className="absolute top-full right-0 pt-3 opacity-0 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300 z-50">
+                      <div className="min-w-[220px] rounded-2xl bg-surface-primary/95 dark:bg-[#1E1535]/95 backdrop-blur-xl border border-[var(--border-default)] shadow-[0_20px_50px_-20px_rgba(0,0,0,0.4)] overflow-hidden">
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            className="block px-5 py-3 text-sm text-brand-text-muted dark:text-white/70 hover:text-brand-text dark:hover:text-brand-teal hover:bg-brand-teal/10 transition-colors duration-200 border-b border-[var(--border-subtle)] last:border-b-0"
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Left group — theme toggle + CTA, pushed to the far left edge. */}
+            <div className="hidden md:flex items-center gap-4">
               {/* Theme Toggle */}
               <button
                 onClick={toggle}
@@ -193,21 +245,39 @@ export default function Navbar() {
           {/* Drawer links — staggered entrance */}
           <div className="p-5 flex flex-col gap-1">
             {NAV_ITEMS.map((item, i) => (
-              <Link
+              <div
                 key={item.href}
-                href={item.href}
-                className={`text-base font-body py-3 px-4 rounded-xl min-h-[44px] flex items-center opacity-0 animate-fade-slide-up ${
-                  pathname === item.href
-                    ? 'text-brand-text dark:text-brand-teal font-medium bg-brand-teal/10'
-                    : 'text-brand-text-muted dark:text-white/60 hover:bg-surface-secondary'
-                }`}
+                className="opacity-0 animate-fade-slide-up"
                 style={{ animationDelay: `${150 + i * 50}ms`, animationFillMode: 'forwards' }}
               >
-                {pathname === item.href && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-brand-teal ml-2 shrink-0" />
+                <Link
+                  href={item.href}
+                  className={`text-base font-body py-3 px-4 rounded-xl min-h-[44px] flex items-center ${
+                    pathname === item.href
+                      ? 'text-brand-text dark:text-brand-teal font-medium bg-brand-teal/10'
+                      : 'text-brand-text-muted dark:text-white/60 hover:bg-surface-secondary'
+                  }`}
+                >
+                  {pathname === item.href && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-teal ml-2 shrink-0" />
+                  )}
+                  {item.label}
+                </Link>
+                {item.children && (
+                  <div className="flex flex-col mr-4 pr-4 border-r border-[var(--border-subtle)] mt-1 mb-2">
+                    {item.children.map((child) => (
+                      <Link
+                        key={child.href}
+                        href={child.href}
+                        onClick={() => setMobileOpen(false)}
+                        className="text-sm text-brand-text-muted dark:text-white/60 py-2.5 px-4 rounded-lg hover:bg-surface-secondary hover:text-brand-text dark:hover:text-brand-teal transition-colors min-h-[44px] flex items-center"
+                      >
+                        {child.label}
+                      </Link>
+                    ))}
+                  </div>
                 )}
-                {item.label}
-              </Link>
+              </div>
             ))}
 
             {/* CTA */}

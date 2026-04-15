@@ -148,7 +148,7 @@ export default function Footer() {
 
             <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
               <div className="flex-1">
-                <span className="inline-flex items-center gap-2 text-[11px] tracking-[0.25em] text-brand-teal font-medium mb-4 uppercase">
+                <span className="inline-flex items-center gap-2 text-[11px] text-brand-teal font-medium mb-4 uppercase">
                   <span className="relative flex w-1.5 h-1.5">
                     <span className="absolute inset-0 rounded-full bg-brand-teal animate-ping opacity-60" />
                     <span className="relative w-1.5 h-1.5 rounded-full bg-brand-teal" />
@@ -175,7 +175,7 @@ export default function Footer() {
                 className="group relative inline-flex items-center gap-3 shrink-0 px-7 py-4 rounded-full bg-brand-teal text-[#1A1130] font-bold text-sm hover:bg-white transition-all duration-300 shadow-[0_0_50px_rgba(135,198,199,0.35)] hover:shadow-[0_0_70px_rgba(135,198,199,0.5)] hover:-translate-y-0.5"
               >
                 <IconWhatsapp />
-                <span className="tracking-wide">احجز استشارة مجانية</span>
+                <span>احجز استشارة مجانية</span>
                 <span className="w-7 h-7 rounded-full bg-[#1A1130]/10 flex items-center justify-center group-hover:-translate-x-1 transition-transform duration-300">
                   <IconArrowLeft />
                 </span>
@@ -201,7 +201,7 @@ export default function Footer() {
                   width={44}
                   height={44}
                   loading="lazy"
-                  quality={80}
+                  quality={75}
                   className="relative rounded-lg transition-transform duration-500 group-hover:scale-95"
                 />
               </div>
@@ -240,7 +240,7 @@ export default function Footer() {
               <span className="text-brand-teal">
                 <IconSparkle />
               </span>
-              <span className="text-[11px] text-white/55 tracking-wider">
+              <span className="text-[11px] text-white/55">
                 مسجل رسمياً · س.ت{' '}
                 <span dir="ltr" className="tabular-nums text-white/80">
                   {content.contact.info.commercialRegistration}
@@ -265,6 +265,21 @@ export default function Footer() {
                     <span className="w-0 h-px bg-brand-teal transition-all duration-300 group-hover:w-5" />
                     <span>{item.label}</span>
                   </Link>
+                  {item.children && (
+                    <ul className="mt-2.5 mr-4 pr-4 border-r border-white/10 flex flex-col gap-2.5">
+                      {item.children.map((child) => (
+                        <li key={child.href}>
+                          <Link
+                            href={child.href}
+                            className="group text-[13px] text-white/40 hover:text-brand-teal transition-colors duration-300 w-fit flex items-center gap-2"
+                          >
+                            <span className="w-0 h-px bg-brand-teal transition-all duration-300 group-hover:w-3" />
+                            <span>{child.label}</span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               ))}
             </ul>
@@ -303,21 +318,88 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <div className="flex items-center gap-3.5 text-sm text-white/60">
-                  <span className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-brand-teal shrink-0">
+                <a
+                  href={content.contact.info.mapLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-3.5 text-sm text-white/60 hover:text-brand-teal transition-colors duration-300"
+                >
+                  <span className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-brand-teal group-hover:bg-brand-teal/10 group-hover:border-brand-teal/40 group-hover:scale-105 transition-all duration-300 shrink-0">
                     <IconPin />
                   </span>
                   <span>{content.contact.info.address}</span>
-                </div>
+                </a>
               </li>
             </ul>
+          </div>
+        </div>
+
+        {/* Licensed by — official compliance bar */}
+        <div className="border-t border-white/[0.06] pt-10 pb-10">
+          <div className="flex flex-col items-center gap-6">
+            {/* Label with decorative lines */}
+            <div className="flex items-center gap-3">
+              <span className="w-10 h-px bg-gradient-to-l from-brand-teal/50 to-transparent" />
+              <span className="text-[10px] text-brand-teal uppercase font-medium">
+                مرخّص رسمياً
+              </span>
+              <span className="w-10 h-px bg-gradient-to-r from-brand-teal/50 to-transparent" />
+            </div>
+
+            {/* Authority logos */}
+            <div className="flex items-center gap-4 sm:gap-6">
+              <a
+                href="https://business.sa"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="المركز السعودي للأعمال"
+                className="group relative h-16 w-[150px] sm:h-[72px] sm:w-[180px] rounded-2xl bg-white/95 backdrop-blur-sm border border-white/10 flex items-center justify-center px-4 py-3 hover:bg-white hover:-translate-y-0.5 hover:shadow-[0_12px_30px_-12px_rgba(135,198,199,0.35)] transition-all duration-300"
+              >
+                <Image
+                  src="/images/partners/saudi-business-center.png"
+                  alt="المركز السعودي للأعمال"
+                  fill
+                  sizes="180px"
+                  className="object-contain p-3"
+                />
+              </a>
+              <a
+                href="https://moe.gov.sa"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="وزارة التعليم"
+                className="group relative h-16 w-[150px] sm:h-[72px] sm:w-[180px] rounded-2xl bg-white/95 backdrop-blur-sm border border-white/10 flex items-center justify-center px-4 py-3 hover:bg-white hover:-translate-y-0.5 hover:shadow-[0_12px_30px_-12px_rgba(135,198,199,0.35)] transition-all duration-300"
+              >
+                <Image
+                  src="/images/partners/ministry-of-education.jpg"
+                  alt="وزارة التعليم"
+                  fill
+                  sizes="180px"
+                  className="object-contain p-3"
+                />
+              </a>
+            </div>
+
+            {/* License number pill */}
+            <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-sm">
+              <span className="text-[10px] text-white/45 uppercase font-medium">
+                رقم الترخيص
+              </span>
+              <span className="w-px h-3 bg-white/15" />
+              <span
+                dir="ltr"
+                className="text-sm font-display tabular-nums text-white/85 tracking-[0.15em]"
+              >
+                {content.contact.info.licenseNumber}
+              </span>
+            </div>
           </div>
         </div>
 
         {/* Social row */}
         <div className="border-t border-white/[0.06] pt-8 pb-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex flex-col items-center md:items-start gap-1.5">
-            <span className="text-[11px] text-brand-teal tracking-[0.3em] uppercase font-medium">
+            <span className="text-[11px] text-brand-teal uppercase font-medium">
               {content.footer.followUs}
             </span>
             <p className="text-xs text-white/40">تابع رحلتنا اليومية عبر منصاتنا</p>
@@ -346,11 +428,11 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="relative z-[2] border-t border-white/[0.06] bg-black/25 backdrop-blur-sm">
         <div className="max-w-[1280px] mx-auto px-5 md:px-12 py-5 flex flex-col-reverse sm:flex-row justify-between items-center gap-3">
-          <p className="text-[11px] text-white/30 tracking-wide">
+          <p className="text-[11px] text-white/30">
             {content.footer.copyright}
           </p>
-          <p className="text-[11px] text-white/40 flex items-center gap-2 tracking-wide">
-            صُنع بحب في الرياض
+          <p className="text-[11px] text-white/40 flex items-center gap-2">
+            صُنع بحب في تبوك
             <span className="text-brand-teal text-sm leading-none">♡</span>
           </p>
         </div>

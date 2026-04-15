@@ -34,9 +34,9 @@ export const metadata: Metadata = {
     'تدخل مبكر',
     'أطفال',
     'تأهيل',
-    'الرياض',
+    'تبوك',
     'المملكة العربية السعودية',
-    'speech therapy Riyadh',
+    'speech therapy Tabuk',
   ],
   authors: [{ name: 'Future Emkan', url: SITE_METADATA.url }],
   creator: 'Future Emkan',
@@ -117,11 +117,12 @@ const jsonLd = {
   email: content.contact.info.email,
   address: {
     '@type': 'PostalAddress',
-    addressLocality: 'Riyadh',
-    addressRegion: 'Riyadh',
+    addressLocality: 'Tabuk',
+    addressRegion: 'Tabuk',
     addressCountry: 'SA',
     streetAddress: content.contact.info.address,
   },
+  hasMap: content.contact.info.mapLink,
   openingHoursSpecification: [
     {
       '@type': 'OpeningHoursSpecification',

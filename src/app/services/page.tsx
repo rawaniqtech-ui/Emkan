@@ -58,7 +58,7 @@ function ServicesHero() {
       />
       <ParticlesBackground />
       <div className="relative text-center px-4 md:px-6 max-w-3xl">
-        <span className="inline-block text-xs text-brand-teal tracking-[0.2em] font-medium mb-6">
+        <span className="inline-block text-xs text-brand-teal font-medium mb-6">
           {content.services.hero.label}
         </span>
         <h1 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-7xl text-brand-text mb-6 leading-[1.1]">
@@ -167,7 +167,7 @@ function ServiceItem({ service, index }: { service: typeof content.services.item
             <div className="w-12 h-12 rounded-xl bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center text-brand-teal">
               <Icon size={26} />
             </div>
-            <span className="text-xs text-brand-teal font-bold tracking-wider">الخدمة ٠{index + 1}</span>
+            <span className="text-xs text-brand-teal font-bold">الخدمة ٠{index + 1}</span>
           </div>
 
           <h3 className="font-display font-bold text-xl md:text-3xl text-brand-text mb-4 leading-tight">{service.title}</h3>
@@ -243,7 +243,7 @@ function ProcessSteps() {
 
       <div ref={ref} className="relative z-[2] max-w-[900px] mx-auto">
         <div className="text-center mb-12">
-          <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-3 block">{content.services.process.sectionLabel}</span>
+          <span className="text-xs text-brand-teal font-medium mb-3 block">{content.services.process.sectionLabel}</span>
           <h2 className="font-display font-bold text-2xl md:text-4xl text-brand-text">{content.services.process.title}</h2>
         </div>
 

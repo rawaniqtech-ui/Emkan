@@ -58,7 +58,7 @@ export default function SectionHeading({
     >
       {label && (
         <span
-          className={`inline-block text-xs tracking-[0.2em] font-medium mb-4 ${
+          className={`inline-block text-xs font-medium mb-4 ${
             light ? 'text-brand-teal-light' : 'text-brand-purple dark:text-brand-teal'
           }`}
         >

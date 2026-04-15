@@ -22,6 +22,7 @@ import {
   SwooshCurve,
 } from '@/components/shared/BrandDecor';
 import { content } from '@/content/ar';
+import { FORMSUBMIT_ENDPOINT, FORMSUBMIT_FORM_ENDPOINT } from '@/lib/constants';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -33,10 +34,11 @@ export default function ContactPage() {
       <ContactHero />
       <QuickContactStrip />
       <ContactContent />
-      <FaqSection />
+      <WorkingHours />
       <RegistrationSection />
       <EmploymentSection />
-      <WorkingHours />
+      <PartnershipSection />
+      <FaqSection />
     </>
   );
 }
@@ -85,7 +87,7 @@ function ContactHero() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-teal opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-teal" />
           </span>
-          <span className="text-xs text-brand-teal font-medium tracking-wider">نحن هنا من أجلك</span>
+          <span className="text-xs text-brand-teal font-medium">نحن هنا من أجلك</span>
         </span>
 
         <div className="contact-hero-el w-12 h-[2px] bg-brand-teal mx-auto mb-4" />
@@ -301,7 +303,7 @@ function ContactContent() {
       >
         <div>
           <div className="mb-5">
-            <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-2 block">أرسل رسالة</span>
+            <span className="text-xs text-brand-teal font-medium mb-2 block">أرسل رسالة</span>
             <h2 className="font-display font-bold text-xl md:text-3xl text-brand-text leading-tight">
               نسعد بسماع قصّتك
             </h2>
@@ -387,30 +389,27 @@ function SocialDot({ name }: { name: string }) {
 
 function MapCard() {
   return (
-    <div className="info-card aspect-[16/7] md:aspect-[16/9] rounded-2xl bg-surface-secondary border border-[var(--border-subtle)] flex items-center justify-center overflow-hidden relative group">
-      {/* Grid lines pattern */}
-      <div
-        className="absolute inset-0 opacity-30"
-        style={{
-          backgroundImage:
-            'linear-gradient(var(--brand-teal) 1px, transparent 1px), linear-gradient(90deg, var(--brand-teal) 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
-          opacity: 0.08,
-        }}
+    <div className="info-card aspect-[16/7] md:aspect-[16/9] rounded-2xl border border-[var(--border-subtle)] hover:border-brand-teal/60 overflow-hidden relative group transition-colors duration-300">
+      {/* Live Google Maps embed — no API key needed for the basic embed. */}
+      <iframe
+        title="موقع إمكان المستقبل في تبوك"
+        src="https://maps.google.com/maps?q=28.400143,36.564665&t=&z=16&ie=UTF8&iwloc=&output=embed"
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        className="absolute inset-0 w-full h-full border-0"
+        allowFullScreen
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-brand-purple/5 via-transparent to-brand-teal/10" />
 
-      {/* Pin with ping */}
-      <div className="relative z-[2] text-center">
-        <div className="relative inline-flex">
-          <span className="absolute inset-0 rounded-full bg-brand-teal opacity-30 animate-ping" />
-          <div className="relative w-14 h-14 rounded-full bg-brand-teal/15 border-2 border-brand-teal flex items-center justify-center text-brand-teal">
-            <IconLocation size={26} />
-          </div>
-        </div>
-        <p className="text-sm text-brand-text font-medium mt-4">الرياض، المملكة العربية السعودية</p>
-        <p className="text-xs text-brand-text-muted mt-1">قريباً: خريطة تفاعلية</p>
-      </div>
+      {/* Floating "open in Google Maps" pill — anchors the canonical mapLink */}
+      <a
+        href={content.contact.info.mapLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="absolute top-3 right-3 z-[2] inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/95 backdrop-blur-sm border border-[var(--border-default)] shadow-[0_4px_14px_-4px_rgba(59,44,89,0.25)] text-[12px] font-medium text-brand-text hover:bg-brand-teal hover:text-white hover:border-brand-teal hover:-translate-y-0.5 transition-all duration-300"
+      >
+        <IconLocation size={14} />
+        <span>افتح في خرائط Google</span>
+      </a>
     </div>
   );
 }
@@ -472,10 +471,19 @@ function ContactForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const honeypotRef = useRef<HTMLInputElement>(null);
   const formId = useId();
 
   const messageCount = fields.message.length;
   const messageMax = 500;
+
+  const preferredTimeLabels: Record<string, string> = {
+    morning: 'صباحًا',
+    afternoon: 'ظهرًا',
+    evening: 'مساءً',
+    anytime: 'أي وقت',
+  };
 
   const validate = (): FormErrors => {
     const e: FormErrors = {};
@@ -492,22 +500,53 @@ function ContactForm() {
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       setFields((prev) => ({ ...prev, [field]: e.target.value }));
       if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
+      if (submitError) setSubmitError(null);
     };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
     const v = validate();
     if (Object.keys(v).length > 0) {
       setErrors(v);
       return;
     }
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      // Arabic field names become the labels in the delivered email.
+      // Emoji prefixes add visual hierarchy inside FormSubmit's fixed template.
+      // Metadata fields (prefixed with _) configure the FormSubmit delivery.
+      const payload: Record<string, string> = {
+        '👤 الاسم': fields.name,
+        '📱 رقم الجوال': fields.phone,
+        '📧 البريد الإلكتروني': fields.email || '—',
+        '🎯 الخدمة المطلوبة': fields.service || '—',
+        '🕐 الوقت المفضل للتواصل': preferredTimeLabels[fields.preferredTime] ?? fields.preferredTime,
+        '💬 الرسالة': fields.message,
+        _subject: `📬 رسالة جديدة من موقع إمكان المستقبل — ${fields.name}`,
+        _template: 'table',
+        _captcha: 'false',
+        _honey: honeypotRef.current?.value ?? '',
+      };
+      if (fields.email) payload._replyto = fields.email;
+
+      const res = await fetch(FORMSUBMIT_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
       setIsSubmitting(false);
       setSubmitted(true);
       setFields({ name: '', phone: '', email: '', service: '', message: '', preferredTime: 'anytime' });
       setTimeout(() => setSubmitted(false), 6000);
-    }, 1200);
+    } catch {
+      setIsSubmitting(false);
+      setSubmitError(content.contact.form.error);
+    }
   };
 
   // text-base on mobile (16px) prevents iOS Safari from auto-zooming on focus
@@ -525,6 +564,18 @@ function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+      {/* Honeypot — off-screen, hidden from humans and AT tools.
+          Bots that fill every input trip this and FormSubmit drops the submission. */}
+      <input
+        ref={honeypotRef}
+        type="text"
+        name="_honey"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="absolute -left-[9999px] w-px h-px opacity-0 pointer-events-none"
+      />
+
       <div className="form-field">
         <label htmlFor={`${formId}-name`} className="block text-sm font-medium text-brand-text mb-2">
           {content.contact.form.name} <span className="text-red-400">*</span>
@@ -686,6 +737,18 @@ function ContactForm() {
           {content.contact.form.success}
         </div>
       )}
+
+      {submitError && (
+        <div
+          className="form-field bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-center text-sm text-red-700 dark:text-red-300 flex items-center justify-center gap-2"
+          role="alert"
+        >
+          <span className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center text-red-600 dark:text-red-400">
+            !
+          </span>
+          {submitError}
+        </div>
+      )}
     </form>
   );
 }
@@ -747,7 +810,7 @@ function FaqSection() {
 
       <div ref={ref} className="relative z-[2] max-w-[820px] mx-auto">
         <div className="text-center mb-6">
-          <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-2 block">الأسئلة الشائعة</span>
+          <span className="text-xs text-brand-teal font-medium mb-2 block">الأسئلة الشائعة</span>
           <h2 className="font-display font-bold text-xl md:text-3xl text-brand-text leading-tight">
             قد تكون إجابتك هنا
           </h2>
@@ -827,7 +890,7 @@ function WorkingHours() {
 
       <div className="relative z-[2] max-w-[560px] mx-auto">
         <div className="text-center mb-4">
-          <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-2 block">ساعات العمل</span>
+          <span className="text-xs text-brand-teal font-medium mb-2 block">ساعات العمل</span>
           <h3 className="font-display font-bold text-xl md:text-2xl text-brand-text mb-3 inline-block">
             {content.contact.hours.title}
           </h3>
@@ -867,7 +930,7 @@ function WorkingHours() {
                   : 'bg-surface-card text-brand-text border-[var(--border-subtle)] hover:border-brand-teal/40 hover:bg-brand-teal/5'
               }`}
             >
-              <span className="font-medium text-xs sm:text-[11px] sm:tracking-wider sm:uppercase opacity-70">{d.day}</span>
+              <span className="font-medium text-xs sm:text-[11px] opacity-70">{d.day}</span>
               <span className="text-sm font-display font-bold">{d.hours}</span>
             </div>
           ))}
@@ -925,7 +988,7 @@ function RegistrationSection() {
   }, []);
 
   return (
-    <section className="py-8 md:py-12 px-4 md:px-12 bg-surface-primary relative overflow-hidden section-vignette">
+    <section id="registration" className="scroll-mt-20 md:scroll-mt-24 py-8 md:py-12 px-4 md:px-12 bg-surface-primary relative overflow-hidden section-vignette">
       <div className="absolute -top-20 -right-20 w-[600px] h-[600px] bg-brand-teal/10 rounded-full blur-[140px] animate-blob-2 pointer-events-none" />
       <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-brand-purple/8 rounded-full blur-[130px] animate-blob-4 pointer-events-none" />
       <SoundWaveBars color="purple" size="md" className="absolute top-12 left-8 md:top-16 md:left-16 opacity-[0.2] animate-float hidden md:flex" />
@@ -934,7 +997,7 @@ function RegistrationSection() {
 
       <div ref={ref} className="relative z-[2] max-w-[1000px] mx-auto">
         <div className="text-center mb-6">
-          <span className="text-xs text-brand-teal tracking-[0.2em] font-medium mb-2 block">التسجيل والتقديم</span>
+          <span className="text-xs text-brand-teal font-medium mb-2 block">التسجيل والتقديم</span>
           <h2 className="font-display font-bold text-xl md:text-3xl text-brand-text mb-2 leading-tight">
             كيف تسجل طفلك معنا
           </h2>
@@ -1016,10 +1079,8 @@ function EmploymentSection() {
     return () => ctx.revert();
   }, []);
 
-  const careersMailto = `mailto:${content.contact.info.email}?subject=${encodeURIComponent('طلب توظيف — إمكان المستقبل')}`;
-
   return (
-    <section className="py-8 md:py-12 px-4 md:px-12 bg-surface-secondary relative overflow-hidden section-vignette">
+    <section id="employment" className="scroll-mt-20 md:scroll-mt-24 py-8 md:py-12 px-4 md:px-12 bg-surface-secondary relative overflow-hidden section-vignette">
       <div className="absolute -top-20 -left-20 w-[500px] h-[500px] bg-brand-teal/10 rounded-full blur-[130px] animate-blob-1 pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-[500px] h-[500px] bg-brand-purple/8 rounded-full blur-[120px] animate-blob-3 pointer-events-none" />
       <SoundWaveBars color="teal" size="md" className="absolute top-10 right-8 md:top-16 md:right-16 opacity-[0.2] animate-float hidden md:flex" />
@@ -1027,10 +1088,11 @@ function EmploymentSection() {
       <SwooshCurve color="purple" width={280} className="absolute bottom-20 right-20 opacity-[0.12] rotate-180 hidden lg:block" />
 
       <div ref={ref} className="relative z-[2] max-w-[1000px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-[0.9fr_1.1fr] gap-6 md:gap-10 items-center">
+        {/* Heading row — description on the right, perks on the left */}
+        <div className="grid grid-cols-1 md:grid-cols-[0.9fr_1.1fr] gap-6 md:gap-10 items-start mb-8">
           <div className="emp-item">
-            <span className="inline-block text-xs text-brand-teal tracking-[0.2em] font-medium mb-2">
-              للتوظيف
+            <span className="inline-block text-xs text-brand-teal font-medium mb-2">
+              {content.contact.cvForm.sectionLabel}
             </span>
             <h2 className="font-display font-bold text-xl md:text-3xl text-brand-text mb-3 leading-tight">
               انضم إلى فريقنا
@@ -1039,9 +1101,6 @@ function EmploymentSection() {
               نبحث باستمرار عن أخصائيين متميزين في مجالات النطق والتخاطب، تعديل السلوك،
               التأهيل السمعي، والتدخل المبكر — ليكونوا جزءاً من رحلة تطوير حقيقية لكل طفل.
             </p>
-            <Button href={careersMailto} size="md">
-              أرسل سيرتك الذاتية
-            </Button>
           </div>
 
           <div className="space-y-2">
@@ -1063,8 +1122,712 @@ function EmploymentSection() {
             ))}
           </div>
         </div>
+
+        {/* Application form — full width below the heading row */}
+        <div className="emp-item bg-surface-card rounded-2xl md:rounded-3xl p-5 sm:p-7 md:p-9 border border-[var(--border-default)]">
+          <div className="mb-5 md:mb-6">
+            <h3 className="font-display font-bold text-lg md:text-2xl text-brand-text mb-2 leading-tight">
+              {content.contact.cvForm.title}
+            </h3>
+            <p className="text-brand-text-muted text-xs md:text-sm leading-relaxed">
+              {content.contact.cvForm.description}
+            </p>
+          </div>
+          <CVApplicationForm />
+        </div>
       </div>
     </section>
+  );
+}
+
+/* ─────────────────── CV APPLICATION FORM ─────────────────── */
+
+type CVFields = { name: string; email: string; phone: string; position: string; message: string };
+type CVErrors = Partial<Record<keyof CVFields | 'cv', string>>;
+const CV_MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+const CV_MIME_TYPES = [
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+];
+const CV_EXTENSIONS = ['.pdf', '.docx'];
+
+function CVApplicationForm() {
+  const [fields, setFields] = useState<CVFields>({
+    name: '',
+    email: '',
+    phone: '',
+    position: '',
+    message: '',
+  });
+  const [file, setFile] = useState<File | null>(null);
+  const [errors, setErrors] = useState<CVErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const honeypotRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  // Tracks whether we're actively waiting for the hidden-iframe submission
+  // response. Using a ref avoids stale-closure issues in the iframe onLoad.
+  const waitingForIframe = useRef(false);
+  const formId = useId();
+  const t = content.contact.cvForm;
+
+  const inputBase =
+    'w-full px-4 py-3.5 md:py-3 rounded-xl border bg-[var(--surface-input)] text-brand-text placeholder:text-brand-text-muted/50 focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all text-base md:text-sm';
+  const inputClasses = (err?: string) =>
+    `${inputBase} ${err ? 'border-red-400 focus:border-red-500' : 'border-[var(--border-default)] focus:border-brand-teal'}`;
+
+  const validateFile = (f: File): string | null => {
+    if (f.size > CV_MAX_SIZE) return t.errors.cvSize;
+    const nameLower = f.name.toLowerCase();
+    const extOk = CV_EXTENSIONS.some((ext) => nameLower.endsWith(ext));
+    const mimeOk = CV_MIME_TYPES.includes(f.type);
+    if (!extOk && !mimeOk) return t.errors.cvType;
+    return null;
+  };
+
+  const handleFileSelected = (f: File | null) => {
+    setSubmitError(null);
+    if (!f) {
+      setFile(null);
+      return;
+    }
+    const err = validateFile(f);
+    if (err) {
+      setErrors((prev) => ({ ...prev, cv: err }));
+      setFile(null);
+      return;
+    }
+    setErrors((prev) => ({ ...prev, cv: undefined }));
+    setFile(f);
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] ?? null;
+    handleFileSelected(f);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const f = e.dataTransfer.files?.[0] ?? null;
+    // For the file to be included in the native form submission we must
+    // also write it into the real <input type="file"> element using a
+    // DataTransfer — setting .files directly isn't allowed.
+    if (f && fileInputRef.current) {
+      try {
+        const dt = new DataTransfer();
+        dt.items.add(f);
+        fileInputRef.current.files = dt.files;
+      } catch {
+        // Older browsers without DataTransfer support fall back to just
+        // updating the React state, meaning the user will need to click
+        // the drop zone and re-pick the file. Safe degradation.
+      }
+    }
+    handleFileSelected(f);
+  };
+
+  const handleChange =
+    (field: keyof CVFields) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setFields((prev) => ({ ...prev, [field]: e.target.value }));
+      if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
+      if (submitError) setSubmitError(null);
+    };
+
+  const validate = (): CVErrors => {
+    const e: CVErrors = {};
+    if (!fields.name.trim()) e.name = t.errors.name;
+    if (!fields.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email))
+      e.email = t.errors.email;
+    if (!fields.phone.trim()) e.phone = t.errors.phone;
+    if (!file) e.cv = t.errors.cv;
+    return e;
+  };
+
+  // The CV form uses a NATIVE HTML form submit targeted at a hidden iframe
+  // because FormSubmit's AJAX endpoint silently drops file uploads. The
+  // standard endpoint handles multipart attachments correctly, and the
+  // hidden iframe keeps the user on our page instead of redirecting to
+  // FormSubmit's thank-you page.
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    setSubmitError(null);
+    const v = validate();
+    if (Object.keys(v).length > 0) {
+      e.preventDefault();
+      setErrors(v);
+      return;
+    }
+    // Let the browser submit natively (no preventDefault) — the form's
+    // target="cv-submit-target" routes the POST into the hidden iframe.
+    setIsSubmitting(true);
+    waitingForIframe.current = true;
+  };
+
+  const handleIframeLoad = () => {
+    // The iframe fires onLoad once when it first mounts (about:blank) and
+    // again when the form POST response loads. Ignore the first.
+    if (!waitingForIframe.current) return;
+    waitingForIframe.current = false;
+    setIsSubmitting(false);
+    setSubmitted(true);
+    setFields({ name: '', email: '', phone: '', position: '', message: '' });
+    setFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (formRef.current) formRef.current.reset();
+    setTimeout(() => setSubmitted(false), 6000);
+  };
+
+  const formatBytes = (b: number) => {
+    if (b < 1024) return `${b} B`;
+    if (b < 1024 * 1024) return `${(b / 1024).toFixed(0)} KB`;
+    return `${(b / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
+  return (
+    <>
+      {/* Hidden iframe target for the native form submit. FormSubmit's
+          response page loads here (invisibly) and onLoad signals success. */}
+      <iframe
+        name="cv-submit-target"
+        title="cv submit target"
+        onLoad={handleIframeLoad}
+        className="hidden"
+        aria-hidden="true"
+      />
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+        action={FORMSUBMIT_FORM_ENDPOINT}
+        method="POST"
+        encType="multipart/form-data"
+        target="cv-submit-target"
+        className="space-y-4"
+        noValidate
+      >
+        {/* FormSubmit metadata — hidden fields so the standard endpoint
+            knows subject, reply address, template, and captcha behavior. */}
+        <input type="hidden" name="_subject" value={`💼 طلب توظيف جديد — ${fields.name || 'متقدم جديد'}`} />
+        <input type="hidden" name="_replyto" value={fields.email} />
+        <input type="hidden" name="_template" value="table" />
+        <input type="hidden" name="_captcha" value="false" />
+
+        {/* Honeypot */}
+        <input
+          ref={honeypotRef}
+          type="text"
+          name="_honey"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          className="absolute -left-[9999px] w-px h-px opacity-0 pointer-events-none"
+        />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor={`${formId}-name`} className="block text-sm font-medium text-brand-text mb-2">
+            {t.name} <span className="text-red-400">*</span>
+          </label>
+          <input
+            id={`${formId}-name`}
+            type="text"
+            name="👤 الاسم"
+            value={fields.name}
+            onChange={handleChange('name')}
+            className={inputClasses(errors.name)}
+            placeholder="أدخل اسمك الكامل"
+            autoComplete="name"
+          />
+          {errors.name && <p className="text-xs text-red-500 mt-1.5">{errors.name}</p>}
+        </div>
+        <div>
+          <label htmlFor={`${formId}-position`} className="block text-sm font-medium text-brand-text mb-2">
+            {t.position}
+          </label>
+          <input
+            id={`${formId}-position`}
+            type="text"
+            name="🎓 التخصص"
+            value={fields.position}
+            onChange={handleChange('position')}
+            className={inputClasses()}
+            placeholder={t.positionPlaceholder}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor={`${formId}-email`} className="block text-sm font-medium text-brand-text mb-2">
+            {t.email} <span className="text-red-400">*</span>
+          </label>
+          <input
+            id={`${formId}-email`}
+            type="email"
+            name="📧 البريد الإلكتروني"
+            dir="ltr"
+            value={fields.email}
+            onChange={handleChange('email')}
+            className={`${inputClasses(errors.email)} text-left`}
+            placeholder="example@email.com"
+            autoComplete="email"
+          />
+          {errors.email && <p className="text-xs text-red-500 mt-1.5">{errors.email}</p>}
+        </div>
+        <div>
+          <label htmlFor={`${formId}-phone`} className="block text-sm font-medium text-brand-text mb-2">
+            {t.phone} <span className="text-red-400">*</span>
+          </label>
+          <input
+            id={`${formId}-phone`}
+            type="tel"
+            name="📱 رقم الجوال"
+            dir="ltr"
+            value={fields.phone}
+            onChange={handleChange('phone')}
+            className={`${inputClasses(errors.phone)} text-left`}
+            placeholder="+966 57 970 3017"
+            autoComplete="tel"
+          />
+          {errors.phone && <p className="text-xs text-red-500 mt-1.5">{errors.phone}</p>}
+        </div>
+      </div>
+
+      {/* Custom styled drop zone — the native file input is hidden behind it but still focusable */}
+      <div>
+        <label className="block text-sm font-medium text-brand-text mb-2">
+          {t.cv} <span className="text-red-400">*</span>
+        </label>
+        <input
+          ref={fileInputRef}
+          id={`${formId}-cv`}
+          type="file"
+          name="📎 السيرة الذاتية"
+          accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          onChange={handleFileInputChange}
+          className="sr-only"
+        />
+        {!file ? (
+          <label
+            htmlFor={`${formId}-cv`}
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={`flex flex-col items-center justify-center gap-2 min-h-[120px] md:min-h-[140px] rounded-xl border-2 border-dashed cursor-pointer transition-all duration-300 px-4 py-5 text-center ${
+              errors.cv
+                ? 'border-red-400 bg-red-50/40 dark:bg-red-900/10'
+                : isDragging
+                  ? 'border-brand-teal bg-brand-teal/10'
+                  : 'border-brand-teal/40 bg-brand-teal/[0.04] hover:border-brand-teal hover:bg-brand-teal/10'
+            }`}
+          >
+            <span className="w-11 h-11 rounded-full bg-brand-teal/15 flex items-center justify-center text-brand-teal">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+            </span>
+            <span className="text-sm font-medium text-brand-text">{t.cvDropzoneIdle}</span>
+            <span className="text-[11px] text-brand-text-muted">{t.cvHelp}</span>
+          </label>
+        ) : (
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-brand-teal/40 bg-brand-teal/[0.06] px-4 py-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="w-10 h-10 rounded-lg bg-brand-teal/15 flex items-center justify-center text-brand-teal shrink-0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-brand-text truncate">{file.name}</p>
+                <p className="text-[11px] text-brand-text-muted tabular-nums">{formatBytes(file.size)}</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => handleFileSelected(null)}
+              className="text-xs text-brand-text-muted hover:text-red-500 transition-colors px-2 py-1 rounded-md shrink-0"
+              aria-label={t.cvRemove}
+            >
+              {t.cvRemove}
+            </button>
+          </div>
+        )}
+        {errors.cv && <p className="text-xs text-red-500 mt-1.5">{errors.cv}</p>}
+      </div>
+
+      <div>
+        <label htmlFor={`${formId}-message`} className="block text-sm font-medium text-brand-text mb-2">
+          {t.message}
+        </label>
+        <textarea
+          id={`${formId}-message`}
+          name="📄 نبذة عنك"
+          rows={4}
+          value={fields.message}
+          onChange={handleChange('message')}
+          className={`${inputClasses()} resize-none`}
+          placeholder={t.messagePlaceholder}
+          maxLength={500}
+        />
+      </div>
+
+      <div>
+        <Button
+          type="submit"
+          size="lg"
+          className={`w-full ${isSubmitting ? 'opacity-70 pointer-events-none' : ''}`}
+        >
+          {isSubmitting ? (
+            <span className="flex items-center gap-2 justify-center">
+              <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+              {t.sending}
+            </span>
+          ) : (
+            t.submit
+          )}
+        </Button>
+      </div>
+
+      {submitted && (
+        <div
+          className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 text-center text-sm text-green-700 dark:text-green-300 flex items-center justify-center gap-2"
+          role="alert"
+        >
+          <span className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-600 dark:text-green-400">
+            ✓
+          </span>
+          {t.success}
+        </div>
+      )}
+
+      {submitError && (
+        <div
+          className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-center text-sm text-red-700 dark:text-red-300 flex items-center justify-center gap-2"
+          role="alert"
+        >
+          <span className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center text-red-600 dark:text-red-400">
+            !
+          </span>
+          {submitError}
+        </div>
+      )}
+      </form>
+    </>
+  );
+}
+
+/* ─────────────────── PARTNERSHIP ─────────────────── */
+
+function PartnershipSection() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '.partner-item',
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: ref.current, start: 'top 85%', toggleActions: 'play none none none' },
+        }
+      );
+    }, ref);
+    return () => ctx.revert();
+  }, []);
+
+  const t = content.contact.partnerForm;
+
+  return (
+    <section id="partnership" className="scroll-mt-20 md:scroll-mt-24 py-8 md:py-12 px-4 md:px-12 bg-surface-primary relative overflow-hidden section-vignette">
+      <div className="absolute -top-20 -right-20 w-[600px] h-[600px] bg-brand-teal/10 rounded-full blur-[140px] animate-blob-2 pointer-events-none" />
+      <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-brand-purple/8 rounded-full blur-[130px] animate-blob-4 pointer-events-none" />
+      <SoundWaveBars color="purple" size="md" className="absolute top-12 left-8 md:top-16 md:left-16 opacity-[0.2] animate-float hidden md:flex" />
+      <SoundWaveBars color="teal" size="sm" className="absolute bottom-10 right-8 md:bottom-16 md:right-16 opacity-[0.18] animate-float-reverse hidden md:flex" />
+      <SwooshCurve color="teal" width={320} className="absolute top-20 left-20 opacity-[0.14] hidden lg:block" />
+
+      <div ref={ref} className="relative z-[2] max-w-[1000px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-[0.9fr_1.1fr] gap-6 md:gap-10 items-start">
+          <div className="partner-item">
+            <span className="inline-block text-xs text-brand-teal font-medium mb-2">
+              {t.sectionLabel}
+            </span>
+            <h2 className="font-display font-bold text-xl md:text-3xl text-brand-text mb-3 leading-tight">
+              {t.title}
+            </h2>
+            <p className="text-brand-text-muted leading-relaxed mb-4 text-sm">
+              {t.description}
+            </p>
+            <ul className="space-y-2.5 mt-4">
+              {['مدارس وروضات', 'مراكز صحية وعيادات', 'جمعيات ومؤسسات غير ربحية', 'جهات حكومية وتعليمية'].map((item) => (
+                <li key={item} className="flex items-center gap-2.5 text-sm text-brand-text-muted">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-teal shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="partner-item bg-surface-card rounded-2xl md:rounded-3xl p-5 sm:p-7 md:p-9 border border-[var(--border-default)]">
+            <PartnerForm />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────── PARTNER FORM ─────────────────── */
+
+type PartnerFields = { organization: string; contactPerson: string; email: string; phone: string; message: string };
+type PartnerErrors = Partial<Record<keyof PartnerFields | 'contact', string>>;
+
+function PartnerForm() {
+  const [fields, setFields] = useState<PartnerFields>({
+    organization: '',
+    contactPerson: '',
+    email: '',
+    phone: '',
+    message: '',
+  });
+  const [errors, setErrors] = useState<PartnerErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const honeypotRef = useRef<HTMLInputElement>(null);
+  const formId = useId();
+  const t = content.contact.partnerForm;
+
+  const inputBase =
+    'w-full px-4 py-3.5 md:py-3 rounded-xl border bg-[var(--surface-input)] text-brand-text placeholder:text-brand-text-muted/50 focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all text-base md:text-sm';
+  const inputClasses = (err?: string) =>
+    `${inputBase} ${err ? 'border-red-400 focus:border-red-500' : 'border-[var(--border-default)] focus:border-brand-teal'}`;
+
+  const handleChange =
+    (field: keyof PartnerFields) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setFields((prev) => ({ ...prev, [field]: e.target.value }));
+      if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
+      if (errors.contact && (field === 'email' || field === 'phone')) {
+        setErrors((prev) => ({ ...prev, contact: undefined }));
+      }
+      if (submitError) setSubmitError(null);
+    };
+
+  const validate = (): PartnerErrors => {
+    const e: PartnerErrors = {};
+    if (!fields.organization.trim()) e.organization = t.errors.organization;
+    if (!fields.contactPerson.trim()) e.contactPerson = t.errors.contactPerson;
+    if (!fields.email.trim() && !fields.phone.trim()) {
+      e.contact = t.errors.contact;
+    } else if (fields.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email)) {
+      e.email = t.errors.email;
+    }
+    if (!fields.message.trim()) e.message = t.errors.message;
+    return e;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitError(null);
+    const v = validate();
+    if (Object.keys(v).length > 0) {
+      setErrors(v);
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const payload: Record<string, string> = {
+        '🏢 اسم الجهة': fields.organization,
+        '👤 الشخص المسؤول': fields.contactPerson,
+        '📧 البريد الإلكتروني': fields.email || '—',
+        '📱 رقم الجوال': fields.phone || '—',
+        '📝 تفاصيل الشراكة': fields.message,
+        _subject: `🤝 طلب شراكة جديد — ${fields.organization}`,
+        _template: 'table',
+        _captcha: 'false',
+        _honey: honeypotRef.current?.value ?? '',
+      };
+      if (fields.email) payload._replyto = fields.email;
+
+      const res = await fetch(FORMSUBMIT_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
+      setIsSubmitting(false);
+      setSubmitted(true);
+      setFields({ organization: '', contactPerson: '', email: '', phone: '', message: '' });
+      setTimeout(() => setSubmitted(false), 6000);
+    } catch {
+      setIsSubmitting(false);
+      setSubmitError(t.error);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+      {/* Honeypot */}
+      <input
+        ref={honeypotRef}
+        type="text"
+        name="_honey"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="absolute -left-[9999px] w-px h-px opacity-0 pointer-events-none"
+      />
+
+      <div>
+        <label htmlFor={`${formId}-organization`} className="block text-sm font-medium text-brand-text mb-2">
+          {t.organization} <span className="text-red-400">*</span>
+        </label>
+        <input
+          id={`${formId}-organization`}
+          type="text"
+          value={fields.organization}
+          onChange={handleChange('organization')}
+          className={inputClasses(errors.organization)}
+          placeholder={t.organizationPlaceholder}
+          autoComplete="organization"
+        />
+        {errors.organization && <p className="text-xs text-red-500 mt-1.5">{errors.organization}</p>}
+      </div>
+
+      <div>
+        <label htmlFor={`${formId}-contactPerson`} className="block text-sm font-medium text-brand-text mb-2">
+          {t.contactPerson} <span className="text-red-400">*</span>
+        </label>
+        <input
+          id={`${formId}-contactPerson`}
+          type="text"
+          value={fields.contactPerson}
+          onChange={handleChange('contactPerson')}
+          className={inputClasses(errors.contactPerson)}
+          placeholder="الاسم الكامل"
+          autoComplete="name"
+        />
+        {errors.contactPerson && <p className="text-xs text-red-500 mt-1.5">{errors.contactPerson}</p>}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor={`${formId}-p-email`} className="block text-sm font-medium text-brand-text mb-2">
+            {t.email}
+          </label>
+          <input
+            id={`${formId}-p-email`}
+            type="email"
+            dir="ltr"
+            value={fields.email}
+            onChange={handleChange('email')}
+            className={`${inputClasses(errors.email)} text-left`}
+            placeholder="example@email.com"
+            autoComplete="email"
+          />
+          {errors.email && <p className="text-xs text-red-500 mt-1.5">{errors.email}</p>}
+        </div>
+        <div>
+          <label htmlFor={`${formId}-p-phone`} className="block text-sm font-medium text-brand-text mb-2">
+            {t.phone}
+          </label>
+          <input
+            id={`${formId}-p-phone`}
+            type="tel"
+            dir="ltr"
+            value={fields.phone}
+            onChange={handleChange('phone')}
+            className={`${inputClasses()} text-left`}
+            placeholder="+966 57 970 3017"
+            autoComplete="tel"
+          />
+        </div>
+      </div>
+      {errors.contact && <p className="text-xs text-red-500 -mt-2">{errors.contact}</p>}
+      {!errors.contact && (
+        <p className="text-[11px] text-brand-text-muted/70 -mt-2">{t.contactHelp}</p>
+      )}
+
+      <div>
+        <label htmlFor={`${formId}-p-message`} className="block text-sm font-medium text-brand-text mb-2">
+          {t.message} <span className="text-red-400">*</span>
+        </label>
+        <textarea
+          id={`${formId}-p-message`}
+          rows={4}
+          value={fields.message}
+          onChange={handleChange('message')}
+          className={`${inputClasses(errors.message)} resize-none`}
+          placeholder={t.messagePlaceholder}
+          maxLength={800}
+        />
+        {errors.message && <p className="text-xs text-red-500 mt-1.5">{errors.message}</p>}
+      </div>
+
+      <div>
+        <Button
+          type="submit"
+          size="lg"
+          className={`w-full ${isSubmitting ? 'opacity-70 pointer-events-none' : ''}`}
+        >
+          {isSubmitting ? (
+            <span className="flex items-center gap-2 justify-center">
+              <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+              {t.sending}
+            </span>
+          ) : (
+            t.submit
+          )}
+        </Button>
+      </div>
+
+      {submitted && (
+        <div
+          className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 text-center text-sm text-green-700 dark:text-green-300 flex items-center justify-center gap-2"
+          role="alert"
+        >
+          <span className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-600 dark:text-green-400">
+            ✓
+          </span>
+          {t.success}
+        </div>
+      )}
+
+      {submitError && (
+        <div
+          className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-center text-sm text-red-700 dark:text-red-300 flex items-center justify-center gap-2"
+          role="alert"
+        >
+          <span className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center text-red-600 dark:text-red-400">
+            !
+          </span>
+          {submitError}
+        </div>
+      )}
+    </form>
   );
 }
 

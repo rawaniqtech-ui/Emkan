@@ -59,7 +59,7 @@ function PageHero() {
       />
       <ParticlesBackground />
       <div className="relative text-center px-4 md:px-6 max-w-3xl">
-        <span className="inline-block text-xs text-brand-teal tracking-[0.2em] font-medium mb-6">مركز إمكان المستقبل</span>
+        <span className="inline-block text-xs text-brand-teal font-medium mb-6">مركز إمكان المستقبل</span>
         <TextReveal as="h1" type="words" stagger={0.1} duration={0.7} className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-7xl text-brand-text mb-6 leading-[1.1]">
           {content.about.hero.title}
         </TextReveal>
@@ -119,7 +119,7 @@ function StorySection() {
 
           {/* Text side */}
           <div>
-            <span className="story-el inline-block text-xs text-brand-teal tracking-[0.2em] font-medium mb-4">قصتنا</span>
+            <span className="story-el inline-block text-xs text-brand-teal font-medium mb-4">قصتنا</span>
             <h2 className="story-el font-display font-bold text-2xl md:text-4xl text-brand-text mb-6 leading-tight">
               من أين بدأنا ولماذا نفعل ما نفعله
             </h2>
@@ -174,7 +174,7 @@ function MissionVision() {
       <div className="absolute inset-0 pattern-bg opacity-[0.02]" />
       <div ref={ref} className="relative z-[2] max-w-[1000px] mx-auto">
         <div className="text-center mb-12">
-          <span className="mv-heading text-xs text-brand-teal tracking-[0.2em] font-medium mb-3 block">{content.about.mission.sectionLabel}</span>
+          <span className="mv-heading text-xs text-brand-teal font-medium mb-3 block">{content.about.mission.sectionLabel}</span>
           <h2 className="mv-heading font-display font-bold text-2xl md:text-4xl text-brand-text">{content.about.mission.title}</h2>
         </div>
 

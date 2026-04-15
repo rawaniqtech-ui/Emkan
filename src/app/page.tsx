@@ -6,7 +6,7 @@ import {
   SoundWaveBars,
 } from '@/components/shared/BrandDecor';
 
-const HeroCanvas = dynamic(() => import('@/components/home/HeroCanvas'));
+const HeroScroll = dynamic(() => import('@/components/home/HeroScroll'));
 const HeroCards3D = dynamic(() => import('@/components/home/HeroCards3D'));
 const ScrollHighlight = dynamic(() => import('@/components/shared/ScrollHighlight'));
 const AboutPreview = dynamic(() => import('@/components/home/AboutPreview'));
@@ -38,9 +38,9 @@ export default function Home() {
         <HeroSection />
       </div>
 
-      {/* 1b. Brand reveal — scroll-driven frame sequence */}
+      {/* 1b. Brand reveal — 3 photos crossfading on scroll */}
       <div id="brand-reveal" className="overflow-x-clip">
-        <HeroCanvas />
+        <HeroScroll />
       </div>
 
       {/* 2. Moving services strip — forced LTR so translateX(-50%) works
