@@ -31,6 +31,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { label: 'الرئيسية', href: '/' },
   { label: 'من نحن', href: '/about' },
   { label: 'خدماتنا', href: '/services' },
+  { label: 'مقالات', href: '/articles' },
   {
     label: 'اتصل بنا',
     href: '/contact',

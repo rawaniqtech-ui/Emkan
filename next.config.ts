@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 768, 1024, 1280, 1536],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    qualities: [65, 70, 75],
+    qualities: [65, 70, 75, 85],
   },
   compiler: {
     // Strip console.* calls from the production bundle but keep error/warn
@@ -25,6 +25,9 @@ const nextConfig: NextConfig = {
       'lenis',
       '@tsparticles/react',
       '@tsparticles/slim',
+      'three',
+      '@react-three/fiber',
+      '@react-three/drei',
     ],
   },
 };
