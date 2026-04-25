@@ -61,7 +61,7 @@ export const SITE_METADATA = {
 // attachments. Forms WITHOUT files use the AJAX endpoint (cleaner UX, real
 // success/error JSON). The CV form uses the standard endpoint via a hidden
 // iframe so multipart file uploads actually deliver as email attachments.
-const FORMSUBMIT_EMAIL = 'rawaniqtech@gmail.com';
+const FORMSUBMIT_EMAIL = 'Emkanspeech@gmail.com';
 export const FORMSUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${FORMSUBMIT_EMAIL}`;
 export const FORMSUBMIT_FORM_ENDPOINT = `https://formsubmit.co/${FORMSUBMIT_EMAIL}`;
 

@@ -13,26 +13,26 @@ type Partner = {
 const PARTNERS: Partner[] = [
   {
     name: 'وزارة التعليم',
-    logo: '/images/partners/ministry-of-education.jpg',
+    logo: '/images/partners/ministry-of-education.png',
     scale: 1.05,
   },
   {
     name: 'مدرسة التعلم الإبداعي الأهلية',
-    logo: '/images/partners/creative-learning-school.jpg',
+    logo: '/images/partners/creative-learning-school.png',
     scale: 1.2,
   },
   {
     name: 'الأكاديمية الشمالية الغربية',
-    logo: '/images/partners/northwestern-academy.jpg',
+    logo: '/images/partners/northwestern-academy.png',
     scale: 0.85,
   },
 ];
 
 function LogoCard({ partner }: { partner: Partner }) {
   return (
-    <div className="relative flex-shrink-0 w-[240px] sm:w-[280px] md:w-[320px] h-[130px] sm:h-[150px] md:h-[170px] mx-3 sm:mx-4 rounded-2xl bg-white border border-[var(--border-default)] overflow-hidden hover:border-brand-teal hover:-translate-y-1 hover:shadow-[0_10px_30px_-12px_rgba(59,44,89,0.35)] transition-all duration-300">
+    <div className="relative flex-shrink-0 w-[220px] sm:w-[260px] md:w-[300px] h-[120px] sm:h-[140px] md:h-[160px] mx-3 sm:mx-4 rounded-2xl bg-white border border-[var(--border-default)] hover:border-brand-teal/60 hover:-translate-y-1 hover:shadow-[0_10px_30px_-12px_rgba(59,44,89,0.35)] transition-[border-color,transform,box-shadow] duration-300 overflow-hidden">
       <div
-        className="absolute inset-0 p-5 sm:p-6 md:p-7"
+        className="absolute inset-0 p-4 sm:p-5 md:p-6"
         style={{ transform: `scale(${partner.scale})`, transformOrigin: 'center' }}
       >
         <div className="relative w-full h-full">
@@ -40,7 +40,7 @@ function LogoCard({ partner }: { partner: Partner }) {
             src={partner.logo}
             alt={partner.name}
             fill
-            sizes="(max-width: 640px) 240px, (max-width: 768px) 280px, 320px"
+            sizes="(max-width: 640px) 220px, (max-width: 768px) 260px, 300px"
             quality={75}
             className="object-contain"
           />

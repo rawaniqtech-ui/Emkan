@@ -353,7 +353,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="المركز السعودي للأعمال"
-                className="group relative h-16 w-[150px] sm:h-[72px] sm:w-[180px] rounded-2xl bg-white/95 backdrop-blur-sm border border-white/10 flex items-center justify-center px-4 py-3 hover:bg-white hover:-translate-y-0.5 hover:shadow-[0_12px_30px_-12px_rgba(135,198,199,0.35)] transition-all duration-300"
+                className="group relative h-16 w-[150px] sm:h-[72px] sm:w-[180px] rounded-2xl bg-white border border-white/10 flex items-center justify-center px-4 py-3 hover:-translate-y-0.5 hover:shadow-[0_12px_30px_-12px_rgba(135,198,199,0.35)] transition-[transform,box-shadow] duration-300"
               >
                 <Image
                   src="/images/partners/saudi-business-center.png"
@@ -368,10 +368,10 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="وزارة التعليم"
-                className="group relative h-16 w-[150px] sm:h-[72px] sm:w-[180px] rounded-2xl bg-white/95 backdrop-blur-sm border border-white/10 flex items-center justify-center px-4 py-3 hover:bg-white hover:-translate-y-0.5 hover:shadow-[0_12px_30px_-12px_rgba(135,198,199,0.35)] transition-all duration-300"
+                className="group relative h-16 w-[150px] sm:h-[72px] sm:w-[180px] rounded-2xl bg-white border border-white/10 flex items-center justify-center px-4 py-3 hover:-translate-y-0.5 hover:shadow-[0_12px_30px_-12px_rgba(135,198,199,0.35)] transition-[transform,box-shadow] duration-300"
               >
                 <Image
-                  src="/images/partners/ministry-of-education.jpg"
+                  src="/images/partners/ministry-of-education.png"
                   alt="وزارة التعليم"
                   fill
                   sizes="180px"
